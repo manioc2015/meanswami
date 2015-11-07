@@ -10,6 +10,8 @@
 | the IoC container for the system binding all of the various parts.
 |
 */
+define('APP_PATH', '/var/www/swami/');
+
 
 $app = new Illuminate\Foundation\Application(
     realpath(__DIR__.'/../')
@@ -51,5 +53,19 @@ $app->singleton(
 | from the actual running of the application and sending responses.
 |
 */
+
+function isset_or(&$prime, $fallback = null) {
+    if (isset($prime)) {
+        return $prime;
+    }
+    return $fallback;
+}
+
+function nonblank_or(&$prime, $fallback = null) {
+    if (isset($prime) && !empty($prime)) {
+        return $prime;
+    }
+    return $fallback;
+}
 
 return $app;

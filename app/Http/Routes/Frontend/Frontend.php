@@ -15,3 +15,10 @@ $router->group(['middleware' => 'auth'], function ()
 	get('profile/edit', 'ProfileController@edit')->name('frontend.profile.edit');
 	patch('profile/update', 'ProfileController@update')->name('frontend.profile.update');
 });
+
+$router->group(['namespace' => 'Restaurant'], function () use ($router) {
+	get('/restaurant/signup/lookup', 'SignupController@getLookup')->name('signup.signup');
+	post('restaurant/signup/lookup', 'SignupController@postLookup')->name('signup.signup');
+	post('restaurant/signup/submit', 'SignupController@postSubmit')->name('signup.signup');
+	$router->controller('signup', 'SignupController');
+});

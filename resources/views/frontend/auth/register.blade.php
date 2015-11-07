@@ -1,58 +1,87 @@
 @extends('frontend.layouts.master')
 
 @section('content')
+<div class="container-fluid">
 	<div class="row">
-
 		<div class="col-md-8 col-md-offset-2">
-
 			<div class="panel panel-default">
-				<div class="panel-heading">{{ trans('labels.register_box_title') }}</div>
-
+				<div class="panel-heading">Login With Facebook</div>
 				<div class="panel-body">
+					<div class="form-group">
+						<div class="col-md-6 col-md-offset-4">
+							<a href="{{ url('auth/facebook') }}"><img src="/images/login_facebook.jpg"></a>
+						</div>
+					</div>
+				</div>
+				<div class="panel-heading">Register</div>
+				<div class="panel-body">
+					@if (count($errors) > 0)
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
 
-					{!! Form::open(['to' => 'auth/register', 'class' => 'form-horizontal', 'role' => 'form']) !!}
+					<form class="form-horizontal" role="form" method="POST" action="{{ secure_url('/auth/register') }}">
+						<input type="hidden" name="_token" value="{{ csrf_token() }}">
 
 						<div class="form-group">
-							{!! Form::label('name', trans('validation.attributes.name'), ['class' => 'col-md-4 control-label']) !!}
+							<label class="col-md-4 control-label">Email Address</label>
 							<div class="col-md-6">
-								{!! Form::input('name', 'name', old('name'), ['class' => 'form-control']) !!}
+								<input type="email" class="form-control" name="email" value="{{ old('email') }}">
 							</div>
 						</div>
 
 						<div class="form-group">
-							{!! Form::label('email', trans('validation.attributes.email'), ['class' => 'col-md-4 control-label']) !!}
+							<label class="col-md-4 control-label">Full Name</label>
 							<div class="col-md-6">
-								{!! Form::input('email', 'email', old('email'), ['class' => 'form-control']) !!}
+								<input type="text" class="form-control" name="name" value="{{ old('name') }}">
 							</div>
 						</div>
 
 						<div class="form-group">
-							{!! Form::label('password', trans('validation.attributes.password'), ['class' => 'col-md-4 control-label']) !!}
+							<label class="col-md-4 control-label">Alias</label>
 							<div class="col-md-6">
-								{!! Form::input('password', 'password', null, ['class' => 'form-control']) !!}
+								<input type="text" class="form-control" name="alias" value="{{ old('alias') }}">
 							</div>
 						</div>
 
 						<div class="form-group">
-							{!! Form::label('password_confirmation', trans('validation.attributes.password_confirmation'), ['class' => 'col-md-4 control-label']) !!}
+							<label class="col-md-4 control-label">Password</label>
 							<div class="col-md-6">
-								{!! Form::input('password', 'password_confirmation', null, ['class' => 'form-control']) !!}
+								<input type="password" class="form-control" name="password">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-4 control-label">Confirm Password</label>
+							<div class="col-md-6">
+								<input type="password" class="form-control" name="password_confirmation">
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-md-4 control-label"></label>
+							<div class="col-md-6">
+							{!! app('captcha')->display(); !!}
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-md-6 col-md-offset-4">
-								{!! Form::submit(trans('labels.register_button'), ['class' => 'btn btn-primary']) !!}
+								<button type="submit" class="btn btn-primary">
+									Register
+								</button>
 							</div>
 						</div>
-
-					{!! Form::close() !!}
-
-				</div><!-- panel body -->
-
-            </div><!-- panel -->
-
-        </div><!-- col-md-8 -->
-
-    </div><!-- row -->
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
 @endsection

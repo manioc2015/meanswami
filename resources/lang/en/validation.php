@@ -112,6 +112,9 @@ return [
         'old_password' => 'Current Password',
         'new_password' => 'New Password',
         'new_password_confirmation' => 'Confirm New Password',
+	'last_updated' => 'Last Updated',
+	'actions' => 'Action',
+	'phone_number' => 'Phone Number'
     ],
 
 ];

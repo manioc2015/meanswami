@@ -28,7 +28,25 @@ return [
     */
 
     'grant_types' => [
-
+        'client_credentials' => [
+            'class' => \League\OAuth2\Server\Grant\ClientCredentialsGrant::class,
+            'access_token_ttl' => 86400
+        ],
+        'password' => [
+            'class' => \League\OAuth2\Server\Grant\PasswordGrant::class,
+            'callback' => '\App\Verifiers\PasswordGrantVerifier@verify',
+            'access_token_ttl' => 86400
+        ],
+        'refresh_token' => [
+            'class' => \League\OAuth2\Server\Grant\RefreshTokenGrant::class,
+            'access_token_ttl' => 86400,
+            'refresh_token_ttl' => 2592000
+        ],
+        'authorization_code' => [
+            'class' => \League\OAuth2\Server\Grant\AuthCodeGrant::class,
+            'access_token_ttl' => 86400,
+            'auth_token_ttl'   => 86400
+        ]
     ],
 
     /*
@@ -43,7 +61,7 @@ return [
     |
     */
 
-    'token_type' => 'League\OAuth2\Server\TokenType\Bearer',
+    'token_type' => \League\OAuth2\Server\TokenType\Bearer::class,
 
     /*
     |--------------------------------------------------------------------------
@@ -76,7 +94,7 @@ return [
     |
     */
 
-    'scope_delimiter' => ',',
+    'scope_delimiter' => '+',
 
     /*
     |--------------------------------------------------------------------------
@@ -87,7 +105,7 @@ return [
     |
     */
 
-    'default_scope' => null,
+    'default_scope' => 'basic',
 
     /*
     |--------------------------------------------------------------------------

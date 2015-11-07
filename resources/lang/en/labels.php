@@ -32,5 +32,7 @@ return [
     'state' => 'State',
     'toggle_navigation' => 'Toggle Navigation',
     'update_information_box_title' => 'Update Information',
+    'signup_box_title' => 'Sign Up My Restaurant on Grubhound!',
+    'submit_button' => 'Submit',
 
 ];

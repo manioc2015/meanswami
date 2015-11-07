@@ -10,10 +10,10 @@ use App\Repositories\Frontend\Auth\AuthenticationContract;
 
 use Illuminate\Contracts\Auth\Registrar;
 
-use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
 use Facebook\Exceptions\FacebookSDKException;
 use App\Models\Access\User;
 use Validator;
+use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
 
 /**
  * Class AuthController
@@ -40,7 +40,7 @@ class AuthController extends Controller
      */
     public function getRegister()
     {
-        return view('auth.register');
+        return view('frontend.auth.register');
     }
 
     public function postRegister(Request $request)
@@ -53,7 +53,7 @@ class AuthController extends Controller
             );
         }
 
-        Auth::login($this->registrar->create($request->all()));
+        \Auth::login($this->registrar->create($request->all()));
 
         return redirect()->route('frontend.dashboard');
     }
@@ -64,7 +64,7 @@ class AuthController extends Controller
     public function getLogin()
     {
         return view('frontend.auth.login')
-            ->withSocialiteLinks($this->getSocialLinks());
+          ->withSocialiteLinks($this->getSocialLinks());
     }
 
 /*
@@ -90,10 +90,6 @@ class AuthController extends Controller
 
         if ($throttles && $this->hasTooManyLoginAttempts($request))
             return $this->sendLockoutResponse($request);
-
-        $this->validate($request, [
-        'email' => 'required|email', 'password' => 'required', 'g-recaptcha-response' => 'required|captcha'
-        ]);
 
         //Don't know why the exception handler is not catching this
         try {

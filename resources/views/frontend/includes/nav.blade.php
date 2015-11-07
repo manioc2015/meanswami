@@ -13,7 +13,7 @@
 			<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 				<ul class="nav navbar-nav">
 					<li>{!! link_to('/', trans('navs.home')) !!}</li>
-					<li>{!! link_to('macros', trans('navs.macros')) !!}</li>
+					<li>{!! link_to('/restaurant/signup/lookup', trans('navs.signup')) !!}</li>
 				</ul>
 
 				<ul class="nav navbar-nav navbar-right">

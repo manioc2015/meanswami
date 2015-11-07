@@ -17,7 +17,6 @@ class Kernel extends HttpKernel
         \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
         \Illuminate\Session\Middleware\StartSession::class,
         \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-        \App\Http\Middleware\VerifyCsrfToken::class,
         \App\Http\Middleware\LocaleMiddleware::class,
 	\LucaDegasperi\OAuth2Server\Middleware\OAuthExceptionHandlerMiddleware::class
     ];
@@ -37,5 +36,6 @@ class Kernel extends HttpKernel
 	'check-authorization-params' => \LucaDegasperi\OAuth2Server\Middleware\CheckAuthCodeRequestMiddleware::class,
     'access.routeNeedsRole' => \App\Http\Middleware\RouteNeedsRole::class,
     'access.routeNeedsPermission' => \App\Http\Middleware\RouteNeedsPermission::class,
+    'csrf' => \App\Http\Middleware\VerifyCsrfToken::class
     ];
 }

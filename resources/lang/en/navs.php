@@ -18,6 +18,7 @@ return [
     'administration' => 'Administration',
     'dashboard' => 'Dashboard',
     'home' => 'Home',
+    'signup' => 'Signup My Restaurant',
     'login' => 'Login',
     'logout' => 'Logout',
     'macros' => 'Macros',

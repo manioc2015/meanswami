@@ -42,15 +42,43 @@ $router->group(['namespace' => 'Backend'], function () use ($router)
 	});
 });
 
-/*
 
-Route::get('/', 'WelcomeController@index');
+$api = app('Dingo\Api\Routing\Router');
+$api->version('v1', [] /*['middleware' => 'api.auth', 'providers' => ['oauth']]*/, function () use ($api) {
+	$api->post('restaurant/signup/lookup', 'App\Http\Controllers\Frontend\Restaurant\SignupController@postLookup');
+	$api->post('restaurant/signup/submit', 'App\Http\Controllers\Frontend\Restaurant\SignupController@postSubmit');
+});
 
-Route::get('home', 'HomeController@index');
+Route::post('oauth/access_token', function() {
+    return Response::json(Authorizer::issueAccessToken());
+});
 
-Route::controllers([
-	'auth' => 'Auth\AuthController',
-	'password' => 'Auth\PasswordController',
-]);
+Route::get('oauth/access_token', function() {
+    return Response::json(Authorizer::issueAccessToken());
+});
 
-*/
+Route::get('oauth/authorize', ['as' => 'oauth.authorize.get','middleware' => ['check-authorization-params', 'auth'], function() {
+    // display a form where the user can authorize the client to access it's data
+   $authParams = Authorizer::getAuthCodeRequestParams();
+   $formParams = array_except($authParams,'client');
+   $formParams['client_id'] = $authParams['client']->getId();
+   return View::make('oauth.authorization-form', ['params'=>$formParams,'client'=>$authParams['client']]);
+}]);
+
+Route::post('oauth/authorize', ['as' => 'oauth.authorize.post','middleware' => ['csrf', 'check-authorization-params', 'auth'], function() {
+
+    $params = Authorizer::getAuthCodeRequestParams();
+    $params['user_id'] = Auth::user()->id;
+    $redirectUri = '';
+
+    // if the user has allowed the client to access its data, redirect back to the client with an auth code
+    if (Input::get('approve') !== null) {
+        $redirectUri = Authorizer::issueAuthCode('user', $params['user_id'], $params);
+    }
+
+    // if the user has denied the client to access its data, redirect back to the client with an error message
+    if (Input::get('deny') !== null) {
+        $redirectUri = Authorizer::authCodeRequestDeniedRedirectUri();
+    }
+    return Redirect::to($redirectUri);
+}]);
