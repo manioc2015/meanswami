@@ -2076,6 +2076,7 @@ input[type="search"] {
       line-height: 46px; } }
 
 .form-group {
+  margin-top: 15px; 
   margin-bottom: 15px; }
 
 .radio, .checkbox {

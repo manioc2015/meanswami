@@ -7,7 +7,7 @@ use Illuminate\Html\FormBuilder;
  * @package App\Http
  */
 class Macros extends FormBuilder {
-
+	
 	/**
 	 * @param $name
 	 * @param null $selected

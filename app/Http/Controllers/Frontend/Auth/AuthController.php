@@ -292,8 +292,8 @@ class AuthController extends Controller
 
         // Log the user into Laravel
         \Auth::login($user);
-
-        return redirect('/')->with('message', 'Successfully logged in with Facebook');
+        $url = \Session::pull('redirectToManage', false) ? '/restaurant/manage' : '/';
+        return redirect($url)->with('message', 'Successfully logged in with Facebook');
 
     }
 }

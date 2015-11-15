@@ -12,6 +12,7 @@
 
         @yield('before-styles-end')
         {!! HTML::style(elixir('css/frontend.css')) !!}
+        {!! HTML::style('css/custom.css') !!}
         @yield('after-styles-end')
 
         <!-- Fonts -->
@@ -22,6 +23,10 @@
         <!-- Place favicon.ico in the root directory -->
 
         {!! HTML::script("js/vendor/modernizr-2.8.3.min.js") !!}
+        {!! HTML::script("js/vendor/angular.1.4.7.js") !!}
+        {!! HTML::script("js/vendor/angular-route.1.4.7.js") !!}
+        {!! HTML::script("js/vendor/angular-resource.1.4.7.js") !!}
+        {!! HTML::script("js/vendor/angular-sanitize.1.4.7.js") !!}
     </head>
     <body>
         <!--[if lt IE 8]>

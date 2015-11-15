@@ -17,8 +17,14 @@ $router->group(['middleware' => 'auth'], function ()
 });
 
 $router->group(['namespace' => 'Restaurant'], function () use ($router) {
-	get('/restaurant/signup/lookup', 'SignupController@getLookup')->name('signup.signup');
-	post('restaurant/signup/lookup', 'SignupController@postLookup')->name('signup.signup');
-	post('restaurant/signup/submit', 'SignupController@postSubmit')->name('signup.signup');
+	get('restaurant/signup/lookup', 'SignupController@getLookup')->name('signup.lookup');
+	post('restaurant/signup/lookup', 'SignupController@postLookup')->name('signup.lookupPost');
+	post('restaurant/signup/addRestaurant', 'SignupController@postAddRestaurant')->name('signup.addRestaurant');
+	post('restaurant/signup/addClient', 'SignupController@postAddClient')->name('signup.addClient');
+
 	$router->controller('signup', 'SignupController');
+});
+
+$router->group(['middleware' => 'auth', 'namespace' => 'Restaurant'], function () use ($router) {
+	get('restaurant/manage', 'ManageController@getIndex')->name('manage.index');
 });
