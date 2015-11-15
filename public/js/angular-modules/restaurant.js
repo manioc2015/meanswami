@@ -44,6 +44,7 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
     $scope.showRestaurantFormStatus = false;
     $scope.showClientFormStatus = false;
     $scope.promptedToRegister = false;
+    $scope.allResultsSignedUp = false;
 
     $scope.lookupRestaurant = function() {
       $scope.lookupComplete = false;
@@ -59,12 +60,15 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
         } else {
           $scope.hasNoResults = false;
           $scope.restaurants = data;
+          var allResultsSignedUp = true;
           for (var i in data) {
             if (!data[i]['signed_up']) {
               $scope.selectedRestaurantIndex = i;
+              allResultsSignedUp = false;
               break;
             }
           }
+          $scope.allResultsSignedUp = allResultsSignedUp;
         }
         $scope.lookupComplete = true;
       },

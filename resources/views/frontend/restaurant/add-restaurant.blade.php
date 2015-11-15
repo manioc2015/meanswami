@@ -209,7 +209,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="form-group" ng-if="!hasNoResults && lookupComplete">
+                        <div class="form-group" ng-if="!hasNoResults && !allResultsSignedUp && lookupComplete">
                             <div class="col-md-4">
                                 <br />
                                 {!! Form::submit('Continue', ['ng-click' => 'doNext();', 'class' => 'btn btn-primary', 'style' => 'margin-right:15px']) !!}
