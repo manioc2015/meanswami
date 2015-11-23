@@ -27,5 +27,10 @@ $router->group(['namespace' => 'Restaurant'], function () use ($router) {
 });
 
 $router->group(['middleware' => 'auth', 'namespace' => 'Restaurant'], function () use ($router) {
-	get('restaurant/manage', 'ManageController@getIndex')->name('manage.index');
+	get('restaurant/manage', 'ManageController@getIndex')->name('restaurant.manage.index');
+});
+
+$router->group(['middleware' => 'auth', 'namespace' => 'Client'], function () use ($router) {
+	get('client/profile/update', 'ProfileController@update')->name('client.profile.update');
+	post('client/profile/save', 'ProfileController@postSave')->name('client.profile.save');
 });

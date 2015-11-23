@@ -2,8 +2,8 @@
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
-use App\Models\Clients\Clients;
-use App\Models\Restaurants\Restaurants;
+use App\Models\Client\Client;
+use App\Models\Restaurant\Restaurant;
 use App\Models\ModelsToModels\ClientProperties;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

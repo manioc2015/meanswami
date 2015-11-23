@@ -1,4 +1,4 @@
-<?php namespace App\Models\Clients;
+<?php namespace App\Models\Client;
 
 use App\Models\BaseModel;
 
@@ -6,7 +6,7 @@ use App\Models\BaseModel;
  * Class Client
  * @package App\Models\Clients\Client
  */
-class Clients extends BaseModel {
+class Client extends BaseModel {
 	/**
 	 * The database table used by the model.
 	 *

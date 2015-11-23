@@ -4,11 +4,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Restaurant\SignupRestaurantRequest;
 use App\Http\Requests\Frontend\Restaurant\SignupClientRequest;
 use Illuminate\Http\Request;
-use App\Models\Restaurants\SPRestaurants;
-use App\Models\Restaurants\Restaurants;
+use App\Models\Restaurant\SPRestaurant;
+use App\Models\Restaurant\Restaurant;
 use App\Models\ModelsToModels\ClientProperties;
 use Illuminate\Contracts\Auth\Guard;
-use App\Models\Clients\Clients;
+use App\Models\Client\Client;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Session;
@@ -96,7 +96,7 @@ class SignupController extends Controller {
 				return $this->response->array(array('data' => $data));
             } else {
 				$phone_number = substr($phone_number, 1, 3) . '-' . substr($phone_number, 4, 3) . '-' . substr($phone_number, 7, 4);
-				$results = SPRestaurants::where('phone', $phone_number)->get();
+				$results = SPRestaurant::where('phone', $phone_number)->get();
 				if (count($results) > 0) {
 					$data = array();
 					$i = 0;
@@ -145,7 +145,7 @@ class SignupController extends Controller {
 		$user = auth()->user();
 		$client = null;
 		if ($user) {
-			$client = Clients::where('user_id', $user->id)->first();
+			$client = Client::where('user_id', $user->id)->first();
 		}
 		Session::put('restaurant_details', $restaurantDetails);
 		if ($user && $client) {
@@ -172,15 +172,12 @@ class SignupController extends Controller {
 	public function getSave(Request $request) {
 		$user = auth()->user();
 		if ($user) {
-			$client = Clients::where('user_id', $user->id)->first();
-			if ($client) {
-				$client = $client->first();
-			}
+			$client = Client::where('user_id', $user->id)->first();
 			if (Session::has('client_details')) {
 				$clientDetails = Session::pull('client_details');
 				$clientDetails['user_id'] = $user->id;
 				if (!$client) {
-					$client = Clients::create($clientDetails);
+					$client = Client::create($clientDetails);
 				} else {
 					unset($clientDetails['billing_method']);
 					unset($clientDetails['status']);
@@ -190,7 +187,7 @@ class SignupController extends Controller {
 			}
 			if (Session::has('restaurant_details')) {
 				$restaurantDetails = Session::pull('restaurant_details');
-				$restaurant = Restaurants::create($restaurantDetails);
+				$restaurant = Restaurant::create($restaurantDetails);
 				$restaurant->save();
 				$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'RESTAURANT'));
 				$clientProperty->save();
@@ -199,7 +196,7 @@ class SignupController extends Controller {
 				$user->attachRole(3);
 			}
 		}
-		return redirect('/dashboard')->with('message', 'Restaurant Added');
+		return redirect('/dashboard')->withFlashSuccess('Restaurant successfully added.');
 	}
 
 	private function buildRestaurantNameWhere($db, $name) {

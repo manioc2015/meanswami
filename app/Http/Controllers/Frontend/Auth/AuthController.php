@@ -12,7 +12,7 @@ use Illuminate\Contracts\Auth\Registrar;
 
 use Facebook\Exceptions\FacebookSDKException;
 use App\Models\Access\User;
-use App\Models\Clients\Clients;
+use App\Models\Client\Client;
 use Validator;
 use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
 
@@ -89,7 +89,7 @@ class AuthController extends Controller
             if ($throttles)
                 $this->clearLoginAttempts($request);
             $user = auth()->user();
-            $client = Clients::where('user_id', $user->id)->first();
+            $client = Client::where('user_id', $user->id)->first();
             $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : ($client ? '/dashboard' : '/');
             return redirect()->intended($url);
         } catch (GeneralException $e) {
@@ -285,7 +285,7 @@ class AuthController extends Controller
 
         // Log the user into Laravel
         \Auth::login($user);
-        $client = \App\Models\Clients\Clients::where('user_id', $user->id)->first();
+        $client = \App\Models\Client\Client::where('user_id', $user->id)->first();
         $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : ($client ? '/dashboard' : '/');
         return redirect($url)->with('message', 'Successfully logged in with Facebook');
 

@@ -3,8 +3,8 @@
 use App\Models\BaseModel;
 
 /**
- * Class Client
- * @package App\Models\Clients\Client
+ * Class ClientProperties
+ * @package App\Models\ModelsToModels\ClientProperties
  */
 class ClientProperties extends BaseModel {
 
