@@ -36,6 +36,10 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             'mac_algorithm' =>  'hmac-sha-256',
         ];
 
+        if (!is_null($this->getParam('refresh_token'))) {
+            $response['refresh_token'] = $this->getParam('refresh_token');
+        }
+
         return $response;
     }
 
@@ -61,7 +65,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
         array_map(function ($param) use (&$params) {
             $param = trim($param);
 
-            preg_match_all('/([a-zA-Z]*)="([\w=]*)"/', $param, $matches);
+            preg_match_all('/([a-zA-Z]*)="([\w=\/+]*)"/', $param, $matches);
 
             // @codeCoverageIgnoreStart
             if (count($matches) !== 3) {
@@ -84,7 +88,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             return;
         }
 
-        if ((int) $params->get('ts') !== time()) {
+        if (abs($params->get('ts') - time()) > 300) {
             return;
         }
 
@@ -105,7 +109,7 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             $timestamp,
             $nonce,
             strtoupper($request->getMethod()),
-            $request->getUri(),
+            $request->getRequestUri(),
             $request->getHost(),
             $request->getPort(),
         ];
@@ -114,7 +118,14 @@ class MAC extends AbstractTokenType implements TokenTypeInterface
             $calculatedSignatureParts[] = $params->get('ext');
         }
 
-        $calculatedSignature = base64_encode(hash_hmac('sha256', implode("\n", $calculatedSignatureParts), $macKey));
+        $calculatedSignature = base64_encode(
+            hash_hmac(
+                'sha256',
+                implode("\n", $calculatedSignatureParts),
+                $macKey,
+                true  // raw_output: outputs raw binary data
+            )
+        );
 
         // Return the access token if the signature matches
         return ($this->hash_equals($calculatedSignature, $signature)) ? $accessToken : null;

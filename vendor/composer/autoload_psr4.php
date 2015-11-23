@@ -24,6 +24,7 @@ return array(
     'SuperClosure\\' => array($vendorDir . '/jeremeamia/SuperClosure/src'),
     'Stringy\\' => array($vendorDir . '/danielstjules/stringy/src'),
     'SammyK\\LaravelFacebookSdk\\' => array($vendorDir . '/sammyk/laravel-facebook-sdk/src/LaravelFacebookSdk'),
+    'Psy\\' => array($vendorDir . '/psy/psysh/src/Psy'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Predis\\' => array($vendorDir . '/predis/predis/src'),
     'Monolog\\' => array($vendorDir . '/monolog/monolog/src/Monolog'),

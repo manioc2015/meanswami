@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'phpDocumentor' => array($vendorDir . '/phpdocumentor/reflection-docblock/src'),
     'System' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
-    'Psy\\' => array($vendorDir . '/psy/psysh/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log'),
     'Prophecy\\' => array($vendorDir . '/phpspec/prophecy/src'),
     'Potsky\\LaravelLocalizationHelpers\\' => array($vendorDir . '/potsky/laravel-localization-helpers/src'),
