@@ -12,6 +12,7 @@ use Illuminate\Contracts\Auth\Registrar;
 
 use Facebook\Exceptions\FacebookSDKException;
 use App\Models\Access\User;
+use App\Models\Clients\Clients;
 use Validator;
 use SammyK\LaravelFacebookSdk\LaravelFacebookSdk;
 
@@ -54,8 +55,8 @@ class AuthController extends Controller
         }
 
         \Auth::login($this->registrar->create($request->all()));
-
-        return redirect()->route('frontend.dashboard');
+        $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : '/';
+        return redirect($url);
     }
 
     /**
@@ -67,16 +68,6 @@ class AuthController extends Controller
           ->withSocialiteLinks($this->getSocialLinks());
     }
 
-/*
-    public function getLogin()
-    {
-        if (view()->exists('auth.authenticate')) {
-            return view('auth.authenticate');
-        }
-
-        return view('auth.login');
-    }
-*/
     /**
      * @param LoginRequest $request
      * @return \Illuminate\Http\RedirectResponse
@@ -97,8 +88,10 @@ class AuthController extends Controller
 
             if ($throttles)
                 $this->clearLoginAttempts($request);
-
-            return redirect()->intended('/dashboard');
+            $user = auth()->user();
+            $client = Clients::where('user_id', $user->id)->first();
+            $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : ($client ? '/dashboard' : '/');
+            return redirect()->intended($url);
         } catch (GeneralException $e) {
             // If the login attempt was unsuccessful we will increment the number of attempts
             // to login and redirect the user back to the login form. Of course, when this
@@ -292,7 +285,8 @@ class AuthController extends Controller
 
         // Log the user into Laravel
         \Auth::login($user);
-        $url = \Session::pull('redirectToManage', false) ? '/restaurant/manage' : '/';
+        $client = \App\Models\Clients\Clients::where('user_id', $user->id)->first();
+        $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : ($client ? '/dashboard' : '/');
         return redirect($url)->with('message', 'Successfully logged in with Facebook');
 
     }

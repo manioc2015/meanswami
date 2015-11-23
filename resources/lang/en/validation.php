@@ -114,7 +114,21 @@ return [
         'new_password_confirmation' => 'Confirm New Password',
 	'last_updated' => 'Last Updated',
 	'actions' => 'Action',
-	'phone_number' => 'Phone Number'
+	'phone_number' => 'Phone Number',
+        'role_name' => 'Role Name',
+	'associated_permissions' => 'Permissions',
+	'role_sort' => 'Sort Order',
+	'permission_group_name' => 'Group Name',
+	'permission_name' => 'Permission Name',
+	'display_name' => 'Display Name',
+	'group' => 'Group',
+	'group-sort' => 'Sort Order',
+	'associated_roles' => 'Associated Roles',
+	'system_permission' => 'System Permission',
+	'dependencies' => 'Dependencies',
+	'active' => 'Active',
+	'confirmed' => 'Confirmed',
+	'other_permissions' => 'Other Permissions'
     ],
 
 ];

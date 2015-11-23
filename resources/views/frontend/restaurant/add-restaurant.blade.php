@@ -54,7 +54,7 @@
                                     {!! Form::label('restaurant_name', 'Restaurant Name', ['class' => 'col-md-12 control-label']) !!}
                                 </td>
                                 <td class="col-md-8">
-                                    {!! Form::input('text', 'restaurant_name', old('restaurant_name'), ['ng-model' => 'restaurant.name', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
+                                    {!! Form::input('text', 'restaurant_name', old('restaurant_name'), ['ng-model' => 'restaurant.name', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;', 'required' => 'required']) !!}
                                 </td>
                             </tr>
                             <tr>

@@ -27,6 +27,7 @@ class SignupClientRequest extends Request {
 	{
 		return [
 			'client_data.client_name'	=> 'required',
+			'client_data.business_name'	=> 'required',
 			'client_data.address1'	=> 'required',
 			'client_data.city'	=> 'required',
 			'client_data.state'	=> 'required',

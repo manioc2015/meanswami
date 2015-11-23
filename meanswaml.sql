@@ -128,8 +128,8 @@ CREATE TABLE "clients" (
   PRIMARY KEY ("id")
 );
 
-DROP INDEX IF EXISTS "idx_clients_user_id_status";
-CREATE INDEX idx_clients_user_id_status ON clients ("user_id", "status");
+DROP INDEX IF EXISTS "idx_unique_clients_user_id";
+create unique index idx_unique_clients_user_id on clients (user_id);
 
 DROP TABLE IF EXISTS "comments";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -262,6 +262,7 @@ CREATE TABLE "menu_items" (
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "deleted_at" timestamp DEFAULT NULL,
+  "active" boolean NOT NULL DEFAULT true
   PRIMARY KEY ("id")
 );
 

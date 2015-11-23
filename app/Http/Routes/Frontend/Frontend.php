@@ -21,6 +21,7 @@ $router->group(['namespace' => 'Restaurant'], function () use ($router) {
 	post('restaurant/signup/lookup', 'SignupController@postLookup')->name('signup.lookupPost');
 	post('restaurant/signup/addRestaurant', 'SignupController@postAddRestaurant')->name('signup.addRestaurant');
 	post('restaurant/signup/addClient', 'SignupController@postAddClient')->name('signup.addClient');
+	get('restaurant/signup/save', 'SignupController@getSave')->name('signup.save');
 
 	$router->controller('signup', 'SignupController');
 });

@@ -18,7 +18,6 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
     };
 
     resource.prototype.addRestaurant = function (restaurant) {
-      console.log(restaurant);
       return resource.save(
         {
           operation: 'addRestaurant',
