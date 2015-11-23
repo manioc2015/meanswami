@@ -35,7 +35,7 @@
                         <table ng-if="lookupComplete && !hasNoResults && !showRestaurantFormStatus && !showClientFormStatus" class="table-bordered">
                             <tr ng-repeat="(index,thisRestaurant) in restaurants">
                                 <td class="col-sm-1">
-                                    <input ng-if="!thisRestaurant.signed_up" type="radio" ng-checked="selectedRestaurantIndex==index" ng-model="selectedRestaurantIndex" value="@{{index}}" />
+                                    <input name="selectedRestaurant" ng-if="!thisRestaurant.signed_up" type="radio" ng-checked="selectedRestaurantIndex==index" ng-click="selectRestaurant(index);" />
                                     <span ng-if="thisRestaurant.signed_up">Already on Grubhound</span>
                                 </td>
                                 <td class="col-sm-8">

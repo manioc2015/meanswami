@@ -69,23 +69,27 @@ class SignupController extends Controller {
 				$data = array();
 				$i = 0;
 				foreach ($results['businesses'] as $i => $listing) {
-					$data[$i]['phone'] = substr($phone_number, 1, 3) . '-' . substr($phone_number, 4, 3) . '-' . substr($phone_number, 7, 4);
-					$data[$i]['name'] = $listing['name'];
-					$data[$i]['sp_listing_id'] = '';
-					$data[$i]['yelp_listing_id'] = $listing['id'];
-					$data[$i]['is_claimed_on_yelp'] = $listing['is_claimed'];
-					$signedUp = DB::table('restaurants')->where('phone', $data[$i]['phone'])->where('name', $data[$i]['name'])->first();
-					$data[$i]['signed_up'] = $signedUp ? true : false;
-					$data[$i]['address1'] = $listing['location']['address'][0];
-					$data[$i]['address2'] = isset_or($listing['location']['address'][1], '');
-					$data[$i]['cross_streets'] = isset_or($listing['location']['cross_streets'], '');
-					$data[$i]['city'] = $listing['location']['city'];
-					$data[$i]['state'] = $listing['location']['state_code'];
-					$data[$i]['zipcode'] = $listing['location']['postal_code'];
-					$data[$i]['country'] = $listing['location']['country_code'];
-					$data[$i]['lat'] = $listing['location']['coordinate']['latitude'];
-					$data[$i]['lon'] = $listing['location']['coordinate']['longitude'];
-					$i++;
+					if (!$listing['is_closed']) {
+						$data[$i]['phone'] = substr($phone_number, 1, 3) . '-' . substr($phone_number, 4, 3) . '-' . substr($phone_number, 7, 4);
+						$data[$i]['name'] = $listing['name'];
+						$data[$i]['sp_listing_id'] = '';
+						$data[$i]['yelp_listing_id'] = $listing['id'];
+						$data[$i]['is_claimed_on_yelp'] = $listing['is_claimed'];
+						$signedUp = DB::table('restaurants')->where('phone', $data[$i]['phone']);
+						$signedUp = $this->buildRestaurantNameWhere($signedUp, $data[$i]['name']);
+						$signedUp = $signedUp->first();
+						$data[$i]['signed_up'] = $signedUp ? true : false;
+						$data[$i]['address1'] = $listing['location']['address'][0];
+						$data[$i]['address2'] = isset_or($listing['location']['address'][1], '');
+						$data[$i]['cross_streets'] = isset_or($listing['location']['cross_streets'], '');
+						$data[$i]['city'] = $listing['location']['city'];
+						$data[$i]['state'] = $listing['location']['state_code'];
+						$data[$i]['zipcode'] = $listing['location']['postal_code'];
+						$data[$i]['country'] = $listing['location']['country_code'];
+						$data[$i]['lat'] = $listing['location']['coordinate']['latitude'];
+						$data[$i]['lon'] = $listing['location']['coordinate']['longitude'];
+						$i++;
+					}
 				}
 				return $this->response->array(array('data' => $data));
             } else {
@@ -100,7 +104,9 @@ class SignupController extends Controller {
 						$data[$i]['sp_listing_id'] = $listing->sp_listing_id;
 						$data[$i]['yelp_listing_id'] = '';
 						$data[$i]['is_claimed_on_yelp'] = null;
-						$signedUp = DB::table('restaurants')->where('phone', $data[$i]['phone'])->where('name', $data[$i]['name'])->first();
+						$signedUp = DB::table('restaurants')->where('phone', $data[$i]['phone']);
+						$signedUp = $this->buildRestaurantNameWhere($signedUp, $data[$i]['name']);
+						$signedUp = $signedUp->first();
 						$data[$i]['signed_up'] = $signedUp ? true : false;
 						$data[$i]['address1'] = $listing->address1;
 						$data[$i]['address2'] = $listing->address2;
@@ -159,5 +165,15 @@ class SignupController extends Controller {
 			Session::put('redirectToManage', true);
 			return $this->response->array(array('action' => 'redirect', 'url' => '/auth/register'));
 		}
+	}
+
+	private function buildRestaurantNameWhere($db, $name) {
+		$words = explode(" ", $name);
+		$db->where("name", "ilike", $words[0]." %");
+		for ($i=1; $i<count($words)-1; $i++) {
+			$db->where("name", "ilike", "% ".$words[$i]." %");
+		}
+		$db->where("name", "ilike", "% ".$words[$i]);
+		return $db;
 	}
 }

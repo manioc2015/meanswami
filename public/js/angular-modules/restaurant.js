@@ -50,6 +50,10 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
       $scope.lookupComplete = false;
       $scope.hasNoResults = true;
       $scope.selectedRestaurantIndex = 0;
+      $scope.showRestaurantFormStatus = false;
+      $scope.showClientFormStatus = false;
+      $scope.promptedToRegister = false;
+      $scope.allResultsSignedUp = false;
       var resource = new RestaurantSignupResource();
       resource.phoneNumber = $scope.phoneNumber;
       var promise = resource.lookupPhoneNumber();
@@ -79,6 +83,9 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
     }
 
     $scope.showRestaurantForm = function() {
+      $scope.showRestaurantFormStatus = false;
+      $scope.showClientFormStatus = false;
+      $scope.promptedToRegister = false;
       if (parseInt($scope.selectedRestaurantIndex) >= 0 ) {
         var index = $scope.selectedRestaurantIndex;
         this.restaurant = {};
@@ -103,6 +110,8 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
     }
 
     $scope.showClientForm = function() {
+      $scope.showClientFormStatus = false;
+      $scope.promptedToRegister = false;
       this.client = {};
       this.client.client_name = '';
       this.client.business_name = this.restaurant.name;
@@ -116,6 +125,10 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
       this.client.phone2 = '';
       $scope.showRestaurantFormStatus = false;
       $scope.showClientFormStatus = true;
+    }
+
+    $scope.selectRestaurant = function(index) {
+      $scope.selectedRestaurantIndex = index;
     }
 
     $scope.doNext = function() {
