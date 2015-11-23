@@ -21,14 +21,14 @@
 						</div>
 
 						<div class="form-group">
-							{!! Form::label('password', trans('validation.attributes.password'), ['class' => 'col-md-4 control-label']) !!}
+							{!! Form::label('password', trans('validation.attributes.new_password'), ['class' => 'col-md-4 control-label']) !!}
 							<div class="col-md-6">
 								{!! Form::input('password', 'password', null, ['class' => 'form-control']) !!}
 							</div>
 						</div>
 
 						<div class="form-group">
-							{!! Form::label('password_confirmation', trans('validation.attributes.password_confirmation'), ['class' => 'col-md-4 control-label']) !!}
+							{!! Form::label('password_confirmation', trans('validation.attributes.new_password_confirmation'), ['class' => 'col-md-4 control-label']) !!}
 							<div class="col-md-6">
 								{!! Form::input('password', 'password_confirmation', null, ['class' => 'form-control']) !!}
 							</div>
