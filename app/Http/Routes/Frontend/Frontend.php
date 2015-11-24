@@ -28,7 +28,19 @@ $router->group(['namespace' => 'Restaurant'], function () use ($router) {
 
 $router->group(['middleware' => 'auth', 'namespace' => 'Restaurant'], function () use ($router) {
 	get('restaurant/manage', 'ManageController@getIndex')->name('restaurant.manage.index');
+	post('restaurant/save', 'ManageController@postRestaurant')->name('restaurant.save');
+	get('restaurant/adslot/lookup', 'ManageController@getAdSlot')->name('restaurant.adslot.lookup');
+	get('restaurant/menuitem/lookup', 'ManageController@getMenuItem')->name('restaurant.menuitem.lookup');
+	get('restaurant/restaurants/lookup', 'ManageController@getRestaurants')->name('restaurant.restaurants.lookup');
 });
+
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:manage_ad_slots'], 'namespace' => 'Restaurant'], function () use ($router) {
+	post('restaurant/adslot/save', 'ManageController@postAdSlot')->name('restaurant.adslot.save');
+});
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:create_menu_items'], 'namespace' => 'Restaurant'], function () use ($router) {
+	post('restaurant/menuitem/save', 'ManageController@postMenuItem')->name('restaurant.menuitem.save');
+});
+
 
 $router->group(['middleware' => 'auth', 'namespace' => 'Client'], function () use ($router) {
 	get('client/profile/update', 'ProfileController@update')->name('client.profile.update');

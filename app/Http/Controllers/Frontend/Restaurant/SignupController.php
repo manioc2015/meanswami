@@ -22,6 +22,10 @@ class SignupController extends Controller {
 	use Helpers;
 	public function __construct(Guard $auth) {
 		$this->auth = $auth;
+		$user = auth()->user();
+		if ($user) {
+			$this->client = Client::where('user_id', $user->id)->first();
+		}
 	}
 
 	/**
@@ -143,12 +147,8 @@ class SignupController extends Controller {
 		$restaurantDetails['status'] = 'PENDING_APPROVAL';
 
 		$user = auth()->user();
-		$client = null;
-		if ($user) {
-			$client = Client::where('user_id', $user->id)->first();
-		}
 		Session::put('restaurant_details', $restaurantDetails);
-		if ($user && $client) {
+		if ($user && $this->client) {
 			return $this->response->array(array('action' => 'redirect', 'url' => '/restaurant/signup/save'));
 		} else {
 			return $this->response->array(array('action' => 'newClient'));
@@ -171,30 +171,28 @@ class SignupController extends Controller {
 
 	public function getSave(Request $request) {
 		$user = auth()->user();
-		if ($user) {
-			$client = Client::where('user_id', $user->id)->first();
-			if (Session::has('client_details')) {
-				$clientDetails = Session::pull('client_details');
-				$clientDetails['user_id'] = $user->id;
-				if (!$client) {
-					$client = Client::create($clientDetails);
-				} else {
-					unset($clientDetails['billing_method']);
-					unset($clientDetails['status']);
-					$client->update($clientDetails);
-				}
-				$client->save();
+		$client = $this->client;
+		if (Session::has('client_details')) {
+			$clientDetails = Session::pull('client_details');
+			$clientDetails['user_id'] = $user->id;
+			if (!$client) {
+				$client = Client::create($clientDetails);
+			} else {
+				unset($clientDetails['billing_method']);
+				unset($clientDetails['status']);
+				$client->update($clientDetails);
 			}
-			if (Session::has('restaurant_details')) {
-				$restaurantDetails = Session::pull('restaurant_details');
-				$restaurant = Restaurant::create($restaurantDetails);
-				$restaurant->save();
-				$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'RESTAURANT'));
-				$clientProperty->save();
-			}
-			if (!$user->hasRole('Master Client') && !$user->hasRole('Standard Client')) {
-				$user->attachRole(3);
-			}
+			$client->save();
+		}
+		if (Session::has('restaurant_details')) {
+			$restaurantDetails = Session::pull('restaurant_details');
+			$restaurant = Restaurant::create($restaurantDetails);
+			$restaurant->save();
+			$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'RESTAURANT'));
+			$clientProperty->save();
+		}
+		if (!$user->hasRole('Master Client') && !$user->hasRole('Standard Client')) {
+			$user->attachRole(3);
 		}
 		return redirect('/dashboard')->withFlashSuccess('Restaurant successfully added.');
 	}

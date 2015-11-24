@@ -10,14 +10,17 @@ use App\Models\Client\Client;
  */
 class ProfileController extends Controller {
 
+	public function __construct() {
+		$user = auth()->user();
+		$this->client = Client::where('user_id', $user->id)->first();
+	}
+
 	/**
 	 * @return mixed
      */
 	public function update() {
-		$user = auth()->user();
-		$client = Client::where('user_id', $user->id)->first();
 		return view('frontend.client.profile.update')
-			->withClient($client);
+			->withClient($this->client);
 	}
 
 	/**
@@ -25,9 +28,7 @@ class ProfileController extends Controller {
 	 * @return mixed
 	 */
 	public function postSave(UpdateProfileRequest $request) {
-		$user = auth()->user();
-		$client = Client::where('user_id', $user->id)->first();
-		$client->update($request->all());
+		$this->client->update($request->all());
 		return redirect()->route('frontend.dashboard')->withFlashSuccess(trans("strings.profile_successfully_updated"));
 	}
 }
