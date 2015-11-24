@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
+var app = angular.module("RestaurantModule", ["ngResource"])
   .factory("RestaurantSignupResource", function ($resource)
   {
     var resource = $resource("/restaurant/signup/:operation",
@@ -35,7 +35,7 @@ var app = angular.module("RestaurantModule", ["ngResource", "ngRoute"])
 
     return resource;
   })
-  .controller("RestaurantSignupController", function($scope, $resource, RestaurantSignupResource, jsonFilter)
+  .controller("RestaurantSignupController", function($scope, $resource, RestaurantSignupResource)
   {
     $scope.lookupComplete = false;
     $scope.hasNoResults = true;

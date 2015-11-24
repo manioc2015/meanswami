@@ -1,4 +1,4 @@
-<?php namespace App\Models\Restaurants;
+<?php namespace App\Models\Restaurant;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class SPRestaurants
  * @package App\Models\Restaurants\SPRestaurants
  */
-class SPRestaurants extends Model {
+class SPRestaurant extends Model {
 
 	/**
 	 * The database table used by the model.

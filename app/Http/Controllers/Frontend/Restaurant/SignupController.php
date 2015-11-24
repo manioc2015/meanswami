@@ -4,11 +4,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Frontend\Restaurant\SignupRestaurantRequest;
 use App\Http\Requests\Frontend\Restaurant\SignupClientRequest;
 use Illuminate\Http\Request;
-use App\Models\Restaurants\SPRestaurants;
-use App\Models\Restaurants\Restaurants;
+use App\Models\Restaurant\SPRestaurant;
+use App\Models\Restaurant\Restaurant;
 use App\Models\ModelsToModels\ClientProperties;
 use Illuminate\Contracts\Auth\Guard;
-use App\Models\Clients\Clients;
+use App\Models\Client\Client;
 use Dingo\Api\Routing\Helpers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Session;
@@ -22,6 +22,10 @@ class SignupController extends Controller {
 	use Helpers;
 	public function __construct(Guard $auth) {
 		$this->auth = $auth;
+		$user = auth()->user();
+		if ($user) {
+			$this->client = Client::where('user_id', $user->id)->first();
+		}
 	}
 
 	/**
@@ -96,7 +100,7 @@ class SignupController extends Controller {
 				return $this->response->array(array('data' => $data));
             } else {
 				$phone_number = substr($phone_number, 1, 3) . '-' . substr($phone_number, 4, 3) . '-' . substr($phone_number, 7, 4);
-				$results = SPRestaurants::where('phone', $phone_number)->get();
+				$results = SPRestaurant::where('phone', $phone_number)->get();
 				if (count($results) > 0) {
 					$data = array();
 					$i = 0;
@@ -143,12 +147,8 @@ class SignupController extends Controller {
 		$restaurantDetails['status'] = 'PENDING_APPROVAL';
 
 		$user = auth()->user();
-		$client = null;
-		if ($user) {
-			$client = Clients::where('user_id', $user->id)->first();
-		}
 		Session::put('restaurant_details', $restaurantDetails);
-		if ($user && $client) {
+		if ($user && $this->client) {
 			return $this->response->array(array('action' => 'redirect', 'url' => '/restaurant/signup/save'));
 		} else {
 			return $this->response->array(array('action' => 'newClient'));
@@ -171,35 +171,30 @@ class SignupController extends Controller {
 
 	public function getSave(Request $request) {
 		$user = auth()->user();
-		if ($user) {
-			$client = Clients::where('user_id', $user->id)->first();
-			if ($client) {
-				$client = $client->first();
+		$client = $this->client;
+		if (Session::has('client_details')) {
+			$clientDetails = Session::pull('client_details');
+			$clientDetails['user_id'] = $user->id;
+			if (!$client) {
+				$client = Client::create($clientDetails);
+			} else {
+				unset($clientDetails['billing_method']);
+				unset($clientDetails['status']);
+				$client->update($clientDetails);
 			}
-			if (Session::has('client_details')) {
-				$clientDetails = Session::pull('client_details');
-				$clientDetails['user_id'] = $user->id;
-				if (!$client) {
-					$client = Clients::create($clientDetails);
-				} else {
-					unset($clientDetails['billing_method']);
-					unset($clientDetails['status']);
-					$client->update($clientDetails);
-				}
-				$client->save();
-			}
-			if (Session::has('restaurant_details')) {
-				$restaurantDetails = Session::pull('restaurant_details');
-				$restaurant = Restaurants::create($restaurantDetails);
-				$restaurant->save();
-				$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'RESTAURANT'));
-				$clientProperty->save();
-			}
-			if (!$user->hasRole('Master Client') && !$user->hasRole('Standard Client')) {
-				$user->attachRole(3);
-			}
+			$client->save();
 		}
-		return redirect('/dashboard')->with('message', 'Restaurant Added');
+		if (Session::has('restaurant_details')) {
+			$restaurantDetails = Session::pull('restaurant_details');
+			$restaurant = Restaurant::create($restaurantDetails);
+			$restaurant->save();
+			$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'RESTAURANT'));
+			$clientProperty->save();
+		}
+		if (!$user->hasRole('Master Client') && !$user->hasRole('Standard Client')) {
+			$user->attachRole(3);
+		}
+		return redirect('/dashboard')->withFlashSuccess('Restaurant successfully added.');
 	}
 
 	private function buildRestaurantNameWhere($db, $name) {

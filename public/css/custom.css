@@ -1,8 +1,11 @@
-.big-plus {
-	font-weight: bold;
-	font-size: 14pt;
-}
-
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
+}
+
+.dropdown-menu {
+	padding: 5px 15px !important;
+}
+
+.modal-750 {
+	width: 750px;
 }

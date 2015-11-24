@@ -27,6 +27,7 @@
         {!! HTML::script("js/vendor/angular-route.1.4.7.js") !!}
         {!! HTML::script("js/vendor/angular-resource.1.4.7.js") !!}
         {!! HTML::script("js/vendor/angular-sanitize.1.4.7.js") !!}
+        {!! HTML::script("js/angular-modules/ui-bootstrap-tpls-0.14.3.js") !!}
     </head>
     <body>
         <!--[if lt IE 8]>

@@ -4,8 +4,9 @@ DROP TABLE IF EXISTS "ad_slot_times";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE "ad_slot_times" (
-  "id" bigint  NOT NULL,
-  "weekdaynum" smallint  NOT NULL,
+  "id" bigserial  NOT NULL,
+  "ad_slot_id" bigint NOT NULL,
+  "weekdaynum" smallint,
   "start_time" time with time zone DEFAULT NULL,
   "end_time" time with time zone DEFAULT NULL,
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -15,7 +16,7 @@ CREATE TABLE "ad_slot_times" (
 );
 
 DROP INDEX IF EXISTS "idx_ad_slot_times";
-CREATE INDEX idx_ad_slot_times ON ad_slot_times ("weekdaynum","start_time","end_time");
+CREATE INDEX idx_ad_slot_times ON ad_slot_times ("weekdaynum","start_time","end_time","ad_slot_id");
 
 DROP TABLE IF EXISTS "ad_slots";
 
@@ -94,7 +95,7 @@ CREATE TABLE "client_properties" (
   "id" serial  NOT NULL,
   "client_id" int  NOT NULL,
   "property_id" int  NOT NULL,
-  "property_type" property_type NOT NULL DEFAULT 'RESTAURANT',
+  "property_type" property_type NOT NULL DEFAULT 'Restaurant',
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "deleted_at" timestamp DEFAULT NULL,
@@ -115,7 +116,7 @@ CREATE TABLE "clients" (
   "address1" varchar(127) NOT NULL DEFAULT '',
   "address2" varchar(127) NOT NULL DEFAULT '',
   "city" varchar(127) NOT NULL DEFAULT '',
-  "state" varchar(6) NOT NULL DEFAULT '',
+  "state" char(2) NOT NULL DEFAULT '',
   "zipcode" varchar(15) NOT NULL DEFAULT '',
   "country" char(2) NOT NULL DEFAULT 'US',
   "phone1" varchar(22) NOT NULL,
@@ -187,10 +188,10 @@ CREATE TABLE "invoices" (
 DROP INDEX IF EXISTS "idx_invoices_invoice_number";
 CREATE UNIQUE INDEX idx_invoices_invoice_number ON invoices ("invoice_number");
 
-DROP TABLE IF EXISTS "menu_item_ad_slots";
+DROP TABLE IF EXISTS "menu_item_ad_slot";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE "menu_item_ad_slots" (
+CREATE TABLE "menu_item_ad_slot" (
   id bigint not null,
   "menu_item_id" bigint  NOT NULL,
   "ad_slot_id" bigint  NOT NULL,
@@ -200,22 +201,23 @@ CREATE TABLE "menu_item_ad_slots" (
   PRIMARY KEY (id)
 );
 
-CREATE INDEX idx_menu_item_ad_slots_menu_item_id_ad_slot_id ON menu_item_ad_slots ("menu_item_id", "ad_slot_id");
+CREATE INDEX idx_menu_item_ad_slot_menu_item_id_ad_slot_id ON menu_item_ad_slot ("menu_item_id", "ad_slot_id");
 
-DROP TABLE IF EXISTS "menu_item_attribute_assignments";
+DROP TABLE IF EXISTS "menu_item_attribute";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE "menu_item_attribute_assignments" (
-  id bigint not null,
+CREATE TABLE "menu_item_attribute" (
+  id bigserial not null,
   "menu_item_id" bigint  NOT NULL,
   "attribute_id" int  NOT NULL,
+  "attribute_group_id" int NOT NULL,
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "deleted_at" timestamp DEFAULT NULL,
   PRIMARY KEY (id)
 );
 
-CREATE INDEX idx_menu_item_attribute_assignments_menu_item_id_attribute_id ON menu_item_attribute_assignments ("menu_item_id", "attribute_id");
+CREATE INDEX idx_menu_item_attribute_menu_item_id_attribute_id ON menu_item_attribute ("menu_item_id", "attribute_id", "attribute_group_id");
 
 
 DROP TABLE IF EXISTS "menu_item_intersects";
@@ -234,8 +236,6 @@ DROP TABLE IF EXISTS "menu_item_prices";
 CREATE TABLE "menu_item_prices" (
   "id" bigserial  NOT NULL,
   "menu_item_id" bigint  NOT NULL,
-  "property_id" int  NOT NULL,
-  "property_type" property_type NOT NULL DEFAULT 'RESTAURANT',
   "min_price" decimal(6,2)  DEFAULT NULL,
   "max_price" decimal(6,2)  DEFAULT NULL,
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -244,8 +244,8 @@ CREATE TABLE "menu_item_prices" (
   PRIMARY KEY ("id")
 );
 
-DROP INDEX IF EXISTS "idx_menu_item_prices_menu_item_id_property_id_property_type";
-CREATE INDEX idx_menu_item_prices_menu_item_id_property_id_property_type ON menu_item_prices ("menu_item_id","property_id","property_type");
+DROP INDEX IF EXISTS "idx_menu_item_prices_menu_item_id";
+CREATE INDEX idx_menu_item_prices_menu_item_id ON menu_item_prices ("menu_item_id");
 
 DROP TABLE IF EXISTS "menu_items";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -253,10 +253,9 @@ DROP TABLE IF EXISTS "menu_items";
 CREATE TABLE "menu_items" (
   "id" bigserial  NOT NULL,
   "property_id" int  NOT NULL,
-  "property_type" property_type NOT NULL DEFAULT 'RESTAURANT',
-  "menu_item_name" varchar(127) NOT NULL DEFAULT '',
+  "property_type" property_type NOT NULL DEFAULT 'Restaurant',
+  "name" varchar(127) NOT NULL DEFAULT '',
   "tagline" varchar(255) NOT NULL DEFAULT '',
-  "description" text NOT NULL,
   "main_ingredients" text NOT NULL,
   "is_test_item" smallint  NOT NULL DEFAULT '0',
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -304,7 +303,7 @@ CREATE TABLE "restaurants" (
   "address2" varchar(127) NOT NULL,
   "cross_streets" varchar(127) NOT NULL,
   "city" varchar(127) NOT NULL,
-  "state" char(6) NOT NULL,
+  "state" char(2) NOT NULL,
   "zipcode" varchar(15) NOT NULL,
   "country" char(2) NOT NULL DEFAULT 'US',
   "lat" decimal(16,13) DEFAULT NULL,
@@ -458,7 +457,7 @@ CREATE TABLE "sp_restaurants" (
   "address1" varchar(127) NOT NULL,
   "address2" varchar(127) NOT NULL,
   "city" varchar(127) NOT NULL,
-  "state" char(6) NOT NULL,
+  "state" char(2) NOT NULL,
   "zipcode" varchar(15) NOT NULL,
   "country" char(2) NOT NULL DEFAULT 'US',
   "lat" decimal(16,13) DEFAULT NULL,
@@ -525,7 +524,6 @@ INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUE
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (239, 1, 'Turkish', 450);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (240, 1, 'Vietnamese', 460);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (241, 1, 'Argentinian', 470);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (242, 1, 'Brazilian', 480);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (243, 1, 'Australian', 490);
 
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (1, 2, 'None', 0);
@@ -533,10 +531,9 @@ INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUE
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (3, 2, 'Main Ingredients', 20);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (4, 2, 'All Ingredients', 30);
 
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (10, 4, 'None', 0);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (11, 4, 'Corn', 10);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (12, 4, 'Dairy', 20);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (14, 4, 'Eggs', 30);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (13, 4, 'Eggs', 30);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (14, 4, 'Fish', 40);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (15, 4, 'Gelatin', 50);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (16, 4, 'Gluten', 60);
@@ -547,26 +544,25 @@ INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUE
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (21, 4, 'Shellfish', 90);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (22, 4, 'Soy', 100);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (24, 4, 'Spices', 110);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (24, 4, 'Tree Nuts', 120);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (25, 4, 'Wheat', 130);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (25, 4, 'Tree Nuts', 120);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (26, 4, 'Wheat', 130);
 
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (100, 3, 'None', 0);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (101, 3, 'Low-calorie', 10);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (103, 3, 'Low-carb', 11);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (103, 3, 'Low-cholesterol', 20);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (104, 3, 'Low-fat', 30);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (105, 3, 'Low-glycemic', 40);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (106, 3, 'Low-protein', 50);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (107, 3, 'Low-sodium', 60);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (101, 3, 'Low-Calorie', 10);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (103, 3, 'Low-Carb', 11);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (103, 3, 'Low-Cholesterol', 20);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (104, 3, 'Low-Fat', 30);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (105, 3, 'Low-Glycemic', 40);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (106, 3, 'Low-Protein', 50);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (107, 3, 'Low-Sodium', 60);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (108, 3, 'Halal', 61);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (109, 3, 'Ital', 70);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (110, 3, 'Kosher', 80);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (111, 3, 'Vegan', 90);
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (113, 2, 'Vegeterian', 100);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (112, 3, 'Vegeterian', 100);
 
-INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (301, 5, 'Doesn''t Matter', 0);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (302, 5, 'Yes', 10);
 INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (303, 5, 'No', 20);
+INSERT INTO attributes (id, attribute_group_id, attribute_value, priority) VALUES (304, 5, 'Optional', 30);
 
 drop table if exists sp_categories;
 

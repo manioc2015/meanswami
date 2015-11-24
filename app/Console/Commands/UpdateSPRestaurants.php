@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\Restaurants\SPRestaurants;
+use App\Models\Restaurant\SPRestaurant;
 use DB;
 
 class UpdateSPRestaurants extends Command
@@ -93,7 +93,7 @@ class UpdateSPRestaurants extends Command
                     'deleted_at' => trim($fields[12]) == 'f' ? null : date('Y-m-d H:i:s')
                 );
                 $this->line(print_r($mapped, true));
-                $record = SPRestaurants::firstOrNew(array('sp_listing_id' => $mapped['sp_listing_id']));
+                $record = SPRestaurant::firstOrNew(array('sp_listing_id' => $mapped['sp_listing_id']));
                 foreach ($mapped as $field => $val) {
                     $record->$field = $val;
                 }

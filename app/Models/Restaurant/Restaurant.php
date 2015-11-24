@@ -1,4 +1,4 @@
-<?php namespace App\Models\Restaurants;
+<?php namespace App\Models\Restaurant;
 
 use App\Models\BaseModel;
 
@@ -6,7 +6,7 @@ use App\Models\BaseModel;
  * Class SPRestaurants
  * @package App\Models\Restaurants\SPRestaurants
  */
-class Restaurants extends BaseModel {
+class Restaurant extends BaseModel {
 
 	/**
 	 * The database table used by the model.

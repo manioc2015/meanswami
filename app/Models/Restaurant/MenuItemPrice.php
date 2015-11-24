@@ -1,26 +1,26 @@
-<?php namespace App\Models\ModelsToModels;
+<?php namespace App\Models\Restaurant;
 
 use App\Models\BaseModel;
 
 /**
- * Class ClientProperties
- * @package App\Models\ModelsToModels\ClientProperties
+ * Class MenuItemPrice
+ * @package App\Models\Restaurants\MenuItemPrice
  */
-class ClientProperties extends BaseModel {
+class MenuItemPrice extends BaseModel {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'client_properties';
+	protected $table = 'menu_item_prices';
 
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['client_id', 'property_id', 'property_type'];
+	protected $fillable = ['menu_item_id', 'min_price', 'max_price'];
 
 	/**
 	 * The attributes that are not mass assignable.
@@ -30,17 +30,9 @@ class ClientProperties extends BaseModel {
 	protected $guarded = ['id'];
 
 	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = [];
-
-	/**
 	 * For soft deletes
 	 *
 	 * @var array
 	 */
 	protected $dates = ['created_at','updated_at','deleted_at'];
-
 }

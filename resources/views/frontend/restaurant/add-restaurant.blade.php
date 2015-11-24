@@ -186,6 +186,14 @@
                             </tr>
                             <tr>
                                 <td class="col-md-4">
+                                    {!! Form::label('client_zipcode', 'Zip Code', ['class' => 'col-md-12 control-label']) !!}
+                                </td>
+                                <td class="col-md-8">
+                                    {!! Form::input('text', 'client_zipcode', old('client_zipcode'), ['ng-model' => 'client.zipcode', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-4">
                                     {!! Form::label('client_country', 'Country', ['class' => 'col-md-12 control-label']) !!}
                                 </td>
                                 <td class="col-md-8">
