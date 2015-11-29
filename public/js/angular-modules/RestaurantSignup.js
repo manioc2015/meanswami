@@ -1,6 +1,6 @@
 'use strict';
 
-var app = angular.module("RestaurantModule", ["ngResource"])
+var app = angular.module("RestaurantSignupModule", ["ngResource"])
   .factory("RestaurantSignupResource", function ($resource)
   {
     var resource = $resource("/restaurant/signup/:operation",
@@ -57,7 +57,9 @@ var app = angular.module("RestaurantModule", ["ngResource"])
       resource.phoneNumber = $scope.phoneNumber;
       var promise = resource.lookupPhoneNumber();
       promise.then(function(data) {
-        data = data.data;
+        if (data['success']) {
+          data = data.data;
+        }
         if (data.length == 0) {
           $scope.hasNoResults = true;
         } else {

@@ -2,9 +2,9 @@
 
 @section('content')
 
-   {!! HTML::script("js/angular-modules/restaurant.js") !!}
+   {!! HTML::script("js/angular-modules/RestaurantSignup.js") !!}
 
-    <div class="row" ng-app="RestaurantModule">
+    <div class="row" ng-module="RestaurantSignupModule">
         <div class="col-md-8 col-md-offset-2">
             <div ng-controller="RestaurantSignupController">
                 <div class="panel panel-default">
@@ -24,31 +24,31 @@
                         </div>
                     </div>
                     <div class="panel-heading" ng-if="lookupComplete" ng-cloak>
-                        <span ng-if="!showRestaurantFormStatus && !showClientFormStatus">Choose Your Restaurant</span>
-                        <span ng-if="showRestaurantFormStatus && !showClientFormStatus">Confirm Your Restaurant's Details</span>
-                        <span ng-if="showClientFormStatus">Provide Your Account Details</span>
+                        <span ng-show="!showRestaurantFormStatus && !showClientFormStatus">Choose Your Restaurant</span>
+                        <span ng-show="showRestaurantFormStatus && !showClientFormStatus">Confirm Your Restaurant's Details</span>
+                        <span ng-show="showClientFormStatus">Provide Your Account Details</span>
                     </div>
                     <div class="panel-body" ng-if="lookupComplete" ng-cloak>
-                        <div class="form-group" ng-if="lookupComplete && hasNoResults">
+                        <div class="form-group" ng-show="lookupComplete && hasNoResults">
                             <div class="col-md-10" style="display: inline;">The phone number you entered yielded no results. Click <a href="javascript:void(0);" ng-click="showRestaurantForm();">here</a> to manually sign up.</div>
                         </div>
-                        <table ng-if="lookupComplete && !hasNoResults && !showRestaurantFormStatus && !showClientFormStatus" class="table-bordered">
+                        <table ng-show="lookupComplete && !hasNoResults && !showRestaurantFormStatus && !showClientFormStatus" class="table-bordered">
                             <tr ng-repeat="(index,thisRestaurant) in restaurants">
                                 <td class="col-sm-1">
-                                    <input name="selectedRestaurant" ng-if="!thisRestaurant.signed_up" type="radio" ng-checked="selectedRestaurantIndex==index" ng-click="selectRestaurant(index);" />
-                                    <span ng-if="thisRestaurant.signed_up">Already on Grubhound</span>
+                                    <input name="selectedRestaurant" ng-show="!thisRestaurant.signed_up" type="radio" ng-checked="selectedRestaurantIndex==index" ng-click="selectRestaurant(index);" />
+                                    <span ng-show="thisRestaurant.signed_up">Already on Grubhound</span>
                                 </td>
                                 <td class="col-sm-8">
-                                    <span ng-if="thisRestaurant.name">@{{thisRestaurant.name}}</span><br ng-if="thisRestaurant.name" />
-                                    <span ng-if="thisRestaurant.address1">@{{thisRestaurant.address1}}</span><br ng-if="thisRestaurant.address1" />
-                                    <span ng-if="thisRestaurant.address2">@{{thisRestaurant.address2}}</span><br ng-if="thisRestaurant.address2" />
-                                    <span ng-if="thisRestaurant.city">@{{thisRestaurant.city}}</span>, <span ng-if="thisRestaurant.state">@{{thisRestaurant.state}}</span> <span ng-if="thisRestaurant.zipcode">@{{thisRestaurant.zipcode}}</span>
-                                    <span ng-if="thisRestaurant.country">@{{thisRestaurant.country}}</span><br ng-if="thisRestaurant.country" />
-                                    <span ng-if="thisRestaurant.phone">@{{thisRestaurant.phone}}</span>
+                                    <span ng-show="thisRestaurant.name">@{{thisRestaurant.name}}</span><br ng-show="thisRestaurant.name" />
+                                    <span ng-show="thisRestaurant.address1">@{{thisRestaurant.address1}}</span><br ng-show="thisRestaurant.address1" />
+                                    <span ng-show="thisRestaurant.address2">@{{thisRestaurant.address2}}</span><br ng-show="thisRestaurant.address2" />
+                                    <span ng-show="thisRestaurant.city">@{{thisRestaurant.city}}</span>, <span ng-show="thisRestaurant.state">@{{thisRestaurant.state}}</span> <span ng-show="thisRestaurant.zipcode">@{{thisRestaurant.zipcode}}</span>
+                                    <span ng-show="thisRestaurant.country">@{{thisRestaurant.country}}</span><br ng-show="thisRestaurant.country" />
+                                    <span ng-show="thisRestaurant.phone">@{{thisRestaurant.phone}}</span>
                                 </td>
                             </tr>
                         </table>
-                        <table ng-if="lookupComplete && !hasNoResults && showRestaurantFormStatus" class="table-bordered">
+                        <table ng-show="lookupComplete && !hasNoResults && showRestaurantFormStatus" class="table-bordered">
                             <tr>
                                 <td class="col-md-4">
                                     {!! Form::label('restaurant_name', 'Restaurant Name', ['class' => 'col-md-12 control-label']) !!}
@@ -135,7 +135,7 @@
                             {!! Form::input('hidden', 'restaurant_lat', old('restaurant_lat'), ['ng-model' => 'restaurant.lat']) !!}
                             {!! Form::input('hidden', 'restaurant_lon', old('restaurant_lon'), ['ng-model' => 'restaurant.lon']) !!}
                         </table>
-                        <table ng-if="lookupComplete && !hasNoResults && showClientFormStatus" class="table-bordered">
+                        <table ng-show="lookupComplete && !hasNoResults && showClientFormStatus" class="table-bordered">
                             <tr>
                                 <td class="col-md-4">
                                     {!! Form::label('client_name', 'Your Name', ['class' => 'col-md-12 control-label']) !!}
@@ -217,7 +217,7 @@
                                 </td>
                             </tr>
                         </table>
-                        <div class="form-group" ng-if="!hasNoResults && !allResultsSignedUp && lookupComplete">
+                        <div class="form-group" ng-show="!hasNoResults && !allResultsSignedUp && lookupComplete">
                             <div class="col-md-4">
                                 <br />
                                 {!! Form::submit('Continue', ['ng-click' => 'doNext();', 'class' => 'btn btn-primary', 'style' => 'margin-right:15px']) !!}

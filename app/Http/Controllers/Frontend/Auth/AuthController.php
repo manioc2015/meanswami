@@ -287,7 +287,7 @@ class AuthController extends Controller
         \Auth::login($user);
         $client = \App\Models\Client\Client::where('user_id', $user->id)->first();
         $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : ($client ? '/dashboard' : '/');
-        return redirect($url)->with('message', 'Successfully logged in with Facebook');
+        return redirect($url)->withFlashSuccess('message', 'Successfully logged in with Facebook');
 
     }
 }

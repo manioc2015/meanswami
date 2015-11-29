@@ -97,7 +97,7 @@ class SignupController extends Controller {
 						$i++;
 					}
 				}
-				return $this->response->array(array('data' => $data));
+				return $this->response->array(array('success' => true, 'data' => $data));
             } else {
 				$phone_number = substr($phone_number, 1, 3) . '-' . substr($phone_number, 4, 3) . '-' . substr($phone_number, 7, 4);
 				$results = SPRestaurant::where('phone', $phone_number)->get();
@@ -124,7 +124,7 @@ class SignupController extends Controller {
 						$data[$i]['lon'] = $listing->lon;
 						$i++;
 					}
-					return $this->response->array(array('data' => $data));
+					return $this->response->array(array('success' => true, 'data' => $data));
 				} else {
 
 					return $this->response->error('', 404);
@@ -188,7 +188,7 @@ class SignupController extends Controller {
 			$restaurantDetails = Session::pull('restaurant_details');
 			$restaurant = Restaurant::create($restaurantDetails);
 			$restaurant->save();
-			$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'RESTAURANT'));
+			$clientProperty = ClientProperties::create(array('client_id' => $client->id, 'property_id' => $restaurant->id, 'property_type' => 'Restaurant'));
 			$clientProperty->save();
 		}
 		if (!$user->hasRole('Master Client') && !$user->hasRole('Standard Client')) {

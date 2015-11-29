@@ -1,41 +1,5 @@
 begin trans;
 
-DROP TABLE IF EXISTS "ad_slot_times";
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE "ad_slot_times" (
-  "id" bigserial  NOT NULL,
-  "ad_slot_id" bigint NOT NULL,
-  "weekdaynum" smallint,
-  "start_time" time with time zone DEFAULT NULL,
-  "end_time" time with time zone DEFAULT NULL,
-  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "deleted_at" timestamp DEFAULT NULL,
-  PRIMARY KEY ("id")
-);
-
-DROP INDEX IF EXISTS "idx_ad_slot_times";
-CREATE INDEX idx_ad_slot_times ON ad_slot_times ("weekdaynum","start_time","end_time","ad_slot_id");
-
-DROP TABLE IF EXISTS "ad_slots";
-
-CREATE TABLE "ad_slots" (
-  "id" bigserial  NOT NULL,
-  "restaurant_id" int  NOT NULL,
-  "priority" smallint NOT NULL DEFAULT '0',
-  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "deleted_at" timestamp DEFAULT NULL,
-  PRIMARY KEY ("id")
-);
-
-DROP INDEX IF EXISTS "idx_ad_slots_restaurant_id";
-CREATE INDEX idx_ad_slots_restaurant_id ON ad_slots ("restaurant_id");
-
-DROP INDEX IF EXISTS "idx_ad_slots_inactive_priority_restaurant_id";
-CREATE INDEX idx_ad_slots_inactive_priority_restaurant_id ON ad_slots ("deleted_at" NULLS FIRST,"priority","restaurant_id");
-
 DROP TABLE IF EXISTS "attribute_groups";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -155,6 +119,9 @@ DROP TABLE IF EXISTS "franchises";
 CREATE TABLE "franchises" (
   "id" int  NOT NULL,
   "franchise_name" varchar(127) NOT NULL DEFAULT '',
+  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "deleted_at" timestamp DEFAULT NULL,
   PRIMARY KEY ("id")
 );
 
@@ -187,21 +154,6 @@ CREATE TABLE "invoices" (
 
 DROP INDEX IF EXISTS "idx_invoices_invoice_number";
 CREATE UNIQUE INDEX idx_invoices_invoice_number ON invoices ("invoice_number");
-
-DROP TABLE IF EXISTS "menu_item_ad_slot";
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE "menu_item_ad_slot" (
-  id bigint not null,
-  "menu_item_id" bigint  NOT NULL,
-  "ad_slot_id" bigint  NOT NULL,
-  "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  "deleted_at" timestamp DEFAULT NULL,
-  PRIMARY KEY (id)
-);
-
-CREATE INDEX idx_menu_item_ad_slot_menu_item_id_ad_slot_id ON menu_item_ad_slot ("menu_item_id", "ad_slot_id");
 
 DROP TABLE IF EXISTS "menu_item_attribute";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -261,7 +213,8 @@ CREATE TABLE "menu_items" (
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "deleted_at" timestamp DEFAULT NULL,
-  "active" boolean NOT NULL DEFAULT true
+  "active" boolean NOT NULL DEFAULT true,
+  availability json,
   PRIMARY KEY ("id")
 );
 

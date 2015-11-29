@@ -23,24 +23,32 @@
         <!-- Place favicon.ico in the root directory -->
 
         {!! HTML::script("js/vendor/modernizr-2.8.3.min.js") !!}
-        {!! HTML::script("js/vendor/angular.1.4.7.js") !!}
-        {!! HTML::script("js/vendor/angular-route.1.4.7.js") !!}
-        {!! HTML::script("js/vendor/angular-resource.1.4.7.js") !!}
-        {!! HTML::script("js/vendor/angular-sanitize.1.4.7.js") !!}
-        {!! HTML::script("js/angular-modules/ui-bootstrap-tpls-0.14.3.js") !!}
+        {!! HTML::script("js/vendor/angular.js") !!}
+        {!! HTML::script("js/vendor/angular-route.js") !!}
+        {!! HTML::script("js/vendor/angular-resource.js") !!}
+        {!! HTML::script("js/vendor/angular-sanitize.js") !!}
+        {!! HTML::script("js/vendor/angular-modules.js") !!}
+        {!! HTML::script("js/vendor/ui-bootstrap.js") !!}
+        {!! HTML::script("js/vendor/angular-spinners.js") !!}
+        @permissions(['view_restaurants', 'create_menu_items'])
+        {!! HTML::script("js/angular-modules/ClientFrontendModule.js") !!}
+        @endauth
     </head>
     <body>
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-
-        @include('frontend.includes.nav')
-
-        <div class="container-fluid">
-            @include('includes.partials.messages')
-            @yield('content')
-        </div><!-- container -->
-
+        @permissions(['view_restaurants', 'create_menu_items'])
+        <div ng-module="ClientFrontendModule">
+        @endauth
+            @include('frontend.includes.nav')
+            <div class="container-fluid">
+                @include('includes.partials.messages')
+                @yield('content')
+            </div><!-- container -->
+        @permissions(['view_restaurants', 'create_menu_items'])
+        </div>
+        @endauth
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="{{asset('js/vendor/jquery-1.11.2.min.js')}}"><\/script>')</script>
         {!! HTML::script('js/vendor/bootstrap.min.js') !!}

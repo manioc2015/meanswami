@@ -44,14 +44,14 @@ class Client extends BaseModel {
 	protected $dates = ['created_at','updated_at','deleted_at'];
 
 	public static function getProperties($id) {
-		$sql = "SELECT r.id as restaurant_id, r.name, r.address1, r.city, r.state, r.zipcode, r.country, r.phone, fmain.id as franchise_id, fmain.franchise_name, fr.id as restaurant_franchise_id
+		$sql = "SELECT r.id as restaurant_id, r.name, r.address1, r.city, r.state, r.zipcode, r.country, r.phone, r.max_menu_items, fmain.max_menu_items as franchise_max_menu_items, fmain.id as franchise_id, fmain.franchise_name, fr.id as restaurant_franchise_id
 			FROM client_properties cp
 			LEFT JOIN restaurants r ON (r.id=cp.property_id AND cp.property_type='Restaurant')
 			LEFT JOIN franchises fmain ON (fmain.id=cp.property_id AND cp.property_type='Franchise')
 			LEFT JOIN franchises fr ON (r.franchise_id=fr.id)
 			WHERE cp.client_id = ?
 			AND cp.deleted_at IS NULL AND r.deleted_at IS NULL
-			ORDER BY franchise_name ASC NULLS LAST, restaurant_franchise_id, name, address1";
+			ORDER BY franchise_name ASC NULLS LAST, restaurant_franchise_id, name, zipcode";
 		$properties = DB::select($sql, array($id));
 		$ret = array();
 		$indexMap = array();
@@ -59,7 +59,7 @@ class Client extends BaseModel {
 		foreach ($properties as $property) {
 			if ($property->franchise_id) {
 				$indexMap[$property->franchise_id] = $i;
-				$ret[$i++] = array("franchise_id" => $property->franchise_id, "franchise_name" => $property->franchise_name, "restaurants" => array());
+				$ret[$i++] = array("franchise_id" => $property->franchise_id, "franchise_name" => $property->franchise_name, "max_menu_items" => $property->max_menu_items, "restaurants" => array());
 			} else if ($property->restaurant_franchise_id) {
 				$index = $indexMap[$property->restaurant_franchise_id];
 				$ret[$index]["restaurants"][] = array(
@@ -83,7 +83,8 @@ class Client extends BaseModel {
 					"state" => $property->state,
 					"zipcode" => $property->zipcode,
 					"country" => $property->country,
-					"phone" => $property->phone
+					"phone" => $property->phone,
+					"max_menu_items" => $property->max_menu_items
 				);				
 			}
 		}

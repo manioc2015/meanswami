@@ -4,24 +4,24 @@ use App\Models\BaseModel;
 use DB;
 
 /**
- * Class SPRestaurants
- * @package App\Models\Restaurants\SPRestaurants
+ * Class Franchise
+ * @package App\Models\Restaurants\Franchise
  */
-class Restaurant extends BaseModel {
+class Franchise extends BaseModel {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'restaurants';
+	protected $table = 'franchises';
 
 	/**
 	 * The attributes that are mass assignable.
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['franchise_id', 'sp_listing_id', 'yp_listing_id', 'yelp_listing_id', 'name', 'address1', 'address2', 'cross_streets', 'city', 'state', 'zipcode', 'country', 'lat', 'lon', 'phone', 'website', 'description', 'email', 'open_hours', 'payment_methods', 'timezone', 'is_claimed_on_yelp', 'status'];
+	protected $fillable = ['franchise_name', 'max_menu_items'];
 
 	/**
 	 * The attributes that are not mass assignable.
@@ -43,9 +43,9 @@ class Restaurant extends BaseModel {
 
 	public static function getOwnerClientIds($id) {
 		$sql = "SELECT DISTINCT cp.client_id
-			FROM restaurants r
-			INNER JOIN client_properties cp ON (r.id=cp.property_id AND cp.property_type='Restaurant')
-			WHERE r.id = ? AND cp.deleted_at IS NULL";
+			FROM franchises f
+			INNER JOIN client_properties cp ON (f.id=cp.property_id AND cp.property_type='Franchise')
+			WHERE f.id = ? AND cp.deleted_at IS NULL";
 		$res = DB::select($sql, array($id));
 		$ret = array();
 		foreach ($res as $row) {
