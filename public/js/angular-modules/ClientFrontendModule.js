@@ -487,26 +487,26 @@ return resource;
 	  for (h = 1; h <= 11; h++) {
 	  	id = (12 + h) + ':00';
 	  	time = h + ':00' + tod;
-	  	$scope.time_slots.push({id: time, value: time});
+	  	$scope.time_slots.push({id: id, value: time});
 	  	id = (12 + h) + ':30';
 	  	time = h + ':30' + tod;
-	  	$scope.time_slots.push({id: time, value: time});
+	  	$scope.time_slots.push({id: id, value: time});
 	  }
 	  tod = 'AM';
 	  h = 12;
 	  id = '0' + ':00';
 	  time = h + ':00' + tod;
-	  $scope.time_slots.push({id: time, value: time});
+	  $scope.time_slots.push({id: id, value: time});
 	  id = '0' + ':30';
 	  time = h + ':30' + tod;
-	  $scope.time_slots.push({id: time, value: time});
+	  $scope.time_slots.push({id: id, value: time});
 	  for (h = 1; h <= 5; h++) {
 	  	id = h + ':00';
 	  	time = h + ':00' + tod;
-	  	$scope.time_slots.push({id: time, value: time});
+	  	$scope.time_slots.push({id: id, value: time});
 	  	id = h + ':30';
 	  	time = h + ':30' + tod;
-	  	$scope.time_slots.push({id: time, value: time});
+	  	$scope.time_slots.push({id: id, value: time});
 	  }
 
 	  $scope.new_slot = {days: ['1','2','3','4','5','6','7'], times: []};
@@ -736,13 +736,13 @@ return resource;
         	if (data['success']) {
         		$scope.menuItemAdded = true;
         		$scope.menu_item.id = data['menu_item_id'];
-        		if (MenuItemCountService.loaded) {
+        		if (MenuItemCountService.loaded && !$scope.menu_item.id) {
 		            MenuItemCountService.set_single_total($scope.menu_item.restaurant_id, MenuItemCountService.menu_item_count['Restaurant'][$scope.menu_item.restaurant_id]['total'] + 1);
 		        }
         		if (data['inactive']) {
         			$scope.menuItemInactive = true;
         		} else {
-	        		if (MenuItemCountService.loaded) {
+	        		if (MenuItemCountService.loaded && !$scope.menu_item.id) {
 		            MenuItemCountService.set_single_active($scope.menu_item.restaurant_id, MenuItemCountService.menu_item_count['Restaurant'][$scope.menu_item.restaurant_id]['active'] + 1);
     	    		}
 	    		}
@@ -778,7 +778,7 @@ return resource;
     $scope.menuItems = false;
     $scope.currentPage = 1;
     $scope.totalItems = 0;
-    $scope.itemsPerPage = 50;
+    $scope.itemsPerPage = 25;
     $scope.menu_items = {};
 
     $scope.numberOfPages=function(){
@@ -854,7 +854,7 @@ return resource;
     $scope.num_active = 0;
     $scope.currentPage = 1;
     $scope.totalItems = 0;
-    $scope.itemsPerPage = 20;
+    $scope.itemsPerPage = 10;
   	$scope.totalItems = $scope.menu_items.length;
 
     $scope.max_menu_items = max_menu_items;

@@ -216,6 +216,10 @@ class ManageController extends Controller {
 					$ret['organic'] = $organic->attribute_id;
 					$spicy = MenuItemAttribute::where('menu_item_id', $id)->where('attribute_group_id', 5)->first();
 					$ret['spicy'] = $spicy->attribute_id;
+					$ret['availability'] = json_decode($menu_item->availability, true);
+					if (!is_array($ret['availability'])) {
+						$ret['availability'] = array();
+					}
 					return $this->response->array(array('success' => true, 'data' => $ret));
 				}
 			}

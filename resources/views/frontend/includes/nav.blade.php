@@ -103,8 +103,8 @@
 			        	<br />
 		            	<button style="float: right; position: relative; bottom: 20px;" class="btn btn-warning" type="button" ng-click="remove_slot(index)">Remove</button>
 			        	<div ng-repeat="(index_time, time_slot) in day_slot['times']">
-				        	From: <select name="start_time" ng-model="menu_item.availability[$parent.index]['times'][index_time]['start_time']" ng-options="hour.value for hour in time_slots"></select>&nbsp;&nbsp;&nbsp;
-				        	To: <select name="end_time" ng-model="menu_item.availability[$parent.index]['times'][index_time]['end_time']" ng-options="hour.value for hour in time_slots"></select>
+				        	From: <select name="start_time" ng-model="time_slot['start_time']" ng-options="hour.value for hour in time_slots track by hour.id"></select>&nbsp;&nbsp;&nbsp;
+				        	To: <select name="end_time" ng-model="time_slot['end_time']" ng-options="hour.value for hour in time_slots track by hour.id"></select>
 			        	</div>
 				        <hr class="schedule" />
 			        </div>

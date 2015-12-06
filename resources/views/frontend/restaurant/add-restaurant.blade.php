@@ -60,7 +60,7 @@
                                     {!! Form::label('restaurant_address1', 'Address Line 1', ['class' => 'col-md-12 control-label']) !!}
                                 </td>
                                 <td class="col-md-8">
-                                    {!! Form::input('text', 'restaurant_address1', old('restaurant_address1'), ['readonly' => 'readonly', 'ng-model' => 'restaurant.address1', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
+                                    {!! Form::input('text', 'restaurant_address1', old('restaurant_address1'), ['ng-model' => 'restaurant.address1', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
                                 </td>
                             </tr>
                             <tr>
@@ -84,7 +84,7 @@
                                     {!! Form::label('restaurant_city', 'City', ['class' => 'col-md-12 control-label']) !!}
                                 </td>
                                 <td class="col-md-8">
-                                    {!! Form::input('text', 'restaurant_city', old('restaurant_city'), ['readonly' => 'readonly', 'ng-model' => 'restaurant.city', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
+                                    {!! Form::input('text', 'restaurant_city', old('restaurant_city'), ['ng-model' => 'restaurant.city', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
                                 </td>
                             </tr>
                             <tr>
