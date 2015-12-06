@@ -218,7 +218,7 @@ class ManageController extends Controller {
 					$ret['spicy'] = $spicy->attribute_id;
 					$ret['availability'] = json_decode($menu_item->availability, true);
 					if (!is_array($ret['availability'])) {
-						$ret['availability'] = array();
+						$ret['availability'] = array('days' => array(), 'courses' => array());
 					}
 					return $this->response->array(array('success' => true, 'data' => $ret));
 				}

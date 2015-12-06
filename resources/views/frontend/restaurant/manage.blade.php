@@ -19,9 +19,9 @@
                           </ul>
 
                           <div class="tab-content">
-                            <div ng-show="lookupComplete" role="tabpanel" class="tab-pane active" id="restaurants" ng-cloak>
+                            <div ng-if="lookupComplete" role="tabpanel" class="tab-pane active" id="restaurants" ng-cloak>
                                 <div class="panel-body" ng-show="restaurants.length == 0">There are no restaurants assigned to your account.</div>
-                                <table ng-if="restaurants.length > 0" class="table table-striped table-hover table-bordered dashboard-table">
+                                <table ng-show="restaurants.length > 0" class="table table-striped table-hover table-bordered dashboard-table">
                                     <tr>
                                         <th class="col-md-6">Restaurant Details</th>
                                         <th class="col-md-2">Total Menu Items</th>
@@ -38,7 +38,7 @@
                                         <td><a href="/restaurant/manage/adslots?restaurant_id=@{{restaurant.id}}">@{{restaurant.max_menu_items}}</a></td>
                                     </tr>
                                 </table>
-                                <div style="width: 100%;" ng-if="restaurants.length > 0">
+                                <div style="width: 100%;" ng-show="restaurants.length > 0">
                                     <div style="float: left; margin: 20px 0px;"><pre>Page: @{{currentPage}} / @{{numPages}}</pre></div>
                                     <uib-pagination style="float: right; " items-per-page="itemsPerPage" boundary-links="true" total-items="totalItems" num-pages = "numPages" ng-model="$parent.currentPage" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
                                 </div>
@@ -73,18 +73,22 @@
                             <table width="100%">
                                 <tr>
                                     <th class="col-md-4">Menu Item</th>
-                                    <th class="col-md-5">Advertisement Schedule</th>
+                                    <th class="col-md-5">Availability</th>
                                     <th class="col-md-3">Advertised (@{{num_active}} / @{{max_menu_items}})</th>
                                 </tr>
                                 <tr ng-repeat="(index, menu_item) in menu_items | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
-                                    <td class="col-md-4"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id)">@{{menu_item.name}}</td>
-                                    <td class="col-md-5">@{{menu_item.name}}</td>
+                                    <td class="col-md-4"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, false)">@{{menu_item.name}}</td>
+                                    <td class="col-md-5"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, true)">
+                                        <span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7" ng-repeat="day in menu_item.availability['days']"><span ng-show="$last && menu_item.availability['days'].length>1">and </span>@{{days_map[day]}}<span ng-show="!$last">,</span> </span><span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7">Only</span><br />
+                                        <span ng-repeat="course in menu_item.availability['courses']"><span ng-show="$last && menu_item.availability['courses'].length>1">and </span>@{{courses_map[course]}}<span ng-show="!$last">, </span></span>
+                                        </a>
+                                    </td>
                                     <td class="col-md-3"><input type="radio" name="active_@{{index}}" ng-model="menu_item.active" ng-checked="menu_item.active" ng-click="updateActive(index, true, $event)" ng-value="true">Yes&nbsp;&nbsp;
                                         <input type="radio" name="active_@{{index}}" ng-model="menu_item.active" ng-checked="!menu_item.active" ng-click="updateActive(index, false, $event)" ng-value="false">No
                                     </td>
                                 </tr>
                             </table>
-                            <div style="width: 100%;" ng-if="menu_items.length > 0">
+                            <div style="width: 100%;" ng-show="menu_items.length > 0">
                                 <div style="float: left; margin: 20px 0px;"><pre>Page: @{{currentPage}} / @{{numPages}}</pre></div>
                                 <uib-pagination style="float: right; " items-per-page="itemsPerPage" boundary-links="true" total-items="totalItems" num-pages = "numPages" ng-model="$parent.currentPage" class="pagination-sm" previous-text="&lsaquo;" next-text="&rsaquo;" first-text="&laquo;" last-text="&raquo;"></uib-pagination>
                             </div>

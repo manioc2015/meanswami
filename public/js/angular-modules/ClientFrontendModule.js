@@ -1,7 +1,7 @@
-var openModal = function(modal, id) {
+var openModal = function(modal, id, schedule) {
 	var controllerElement = document.querySelector('#'+modal);
 	var controllerScope = angular.element(controllerElement).scope();
-	controllerScope.open(id);
+	controllerScope.open(id, schedule);
 }
 
 'use strict';
@@ -301,7 +301,7 @@ return resource;
     $scope.menu_item = {};
     $scope.id = null;
 
-    $scope.lookupMenuItem = function(id) {
+    $scope.lookupMenuItem = function(id, schedule) {
       $scope.lookupComplete = false;
       var resource = new RestaurantDataResource();
       var promise = resource.lookupMenuItem(id);
@@ -318,7 +318,10 @@ return resource;
 				  resolve: {
 				    data: function () {
 				      return $scope.menu_item;
-				    }
+				    },
+					loadSchedule: function() {
+						return schedule;
+					}
 				  },
 				  size: '750'
 			   });
@@ -331,7 +334,7 @@ return resource;
       });
     }
 
-    $scope.open = function (id) {
+    $scope.open = function (id, schedule) {
       $scope.id = id;
       $scope.menu_item = {
       	id: null, 
@@ -349,10 +352,10 @@ return resource;
       	allergens: [11,12,13,14,15,16,17,18,19,20,21,22,24,25,26], 
       	organic: 1, 
       	spicy: 303,
-      	availability: []
+      	availability: {'days': [1,2,3,4,5,6,7], 'courses': ['breakfast', 'brunch', 'lunch', 'tea', 'dinner', 'late-night']}
       };    	
 	  if (id) {
-	  	$scope.lookupMenuItem(id);
+	  	$scope.lookupMenuItem(id, schedule);
 	  } else {
 	  	var modalInstance = $uibModal.open({
 		    animation: true,
@@ -361,13 +364,16 @@ return resource;
 		    resolve: {
 		      data: function () {
 		        return $scope.menu_item;
+		      },
+		      loadSchedule: function() {
+		      	return schedule;
 		      }
 		    },
 		    size: '750'
 		  });
 	  }
     }
-  }]).controller('MenuItemCtrl', ['$scope', '$uibModalInstance', 'RestaurantDataResource', 'MenuItemCountService', 'data', function ($scope, $uibModalInstance, RestaurantDataResource, MenuItemCountService, data) {
+  }]).controller('MenuItemCtrl', ['$scope', '$uibModalInstance', 'RestaurantDataResource', 'MenuItemCountService', 'data', 'loadSchedule', function ($scope, $uibModalInstance, RestaurantDataResource, MenuItemCountService, data, loadSchedule) {
   	  $scope.cuisines1 = [
   	  	{id: 200, value: 'American'},
 		{id: 241, value: 'Argentinian'},
@@ -464,123 +470,40 @@ return resource;
 
 	  $scope.restaurants = {};
 
-	  $scope.time_slots = [];
-	  var tod = 'AM';
-	  var time = null;
-	  var h = null;
-	  for (h = 6; h <= 11; h++) {
-	  	id = h + ':00';
-	  	time = h + ':00' + tod;
-	  	$scope.time_slots.push({id: id, value: time});
-	  	id = h + ':30';
-	  	time = h + ':30' + tod;
-	  	$scope.time_slots.push({id: id, value: time});
-	  }
-	  tod = 'PM';
-	  h = 12;
-	  id = h + ':00';
-	  time = h + ':00' + tod;
-	  $scope.time_slots.push({id: id, value: time});
-	  id = h + ':30';
-	  time = h + ':30' + tod;
-	  $scope.time_slots.push({id: id, value: time});
-	  for (h = 1; h <= 11; h++) {
-	  	id = (12 + h) + ':00';
-	  	time = h + ':00' + tod;
-	  	$scope.time_slots.push({id: id, value: time});
-	  	id = (12 + h) + ':30';
-	  	time = h + ':30' + tod;
-	  	$scope.time_slots.push({id: id, value: time});
-	  }
-	  tod = 'AM';
-	  h = 12;
-	  id = '0' + ':00';
-	  time = h + ':00' + tod;
-	  $scope.time_slots.push({id: id, value: time});
-	  id = '0' + ':30';
-	  time = h + ':30' + tod;
-	  $scope.time_slots.push({id: id, value: time});
-	  for (h = 1; h <= 5; h++) {
-	  	id = h + ':00';
-	  	time = h + ':00' + tod;
-	  	$scope.time_slots.push({id: id, value: time});
-	  	id = h + ':30';
-	  	time = h + ':30' + tod;
-	  	$scope.time_slots.push({id: id, value: time});
-	  }
-
-	  $scope.new_slot = {days: ['1','2','3','4','5','6','7'], times: []};
-
-	  $scope.days_map = {'1': 'Mon', '2': 'Tue', '3': 'Wed', '4': 'Thu', '5': 'Fri', '6': 'Sat', '7': 'Sun'};
-
-	  $scope.start_time = null;
-	  $scope.end_time = null;
 	  $scope.day_error = false;
-	  $scope.time_error = false;
-	  $scope.print_availability = function(availability) {
 
+	  if (loadSchedule) {
+	  	$scope.menuItemAdded = true;
+	  	$scope.step = 5;
+	  	$scope.doSchedule = true;
 	  }
 
-	  $scope.add_time = function() {
-	  	if (!$scope.start_time || !$scope.end_time) {
-	  		return false;
-	  	}
-	  	var new_time = {start_time: $scope.start_time, end_time: $scope.end_time};
-	  	$scope.new_slot.times.push(new_time);
-	  	$scope.start_time = null;
-	  	$scope.end_time = null;
+	  $scope.daySelected = function(day) {
+	  	return $scope.menu_item.availability['days'].indexOf(day) >= 0;
 	  }
 
-	  $scope.add_slot = function() {
-	  	$scope.day_error = false;
-	  	$scope.time_error = false;
-	  	if ($scope.new_slot.days.length == 0) {
-	  		$scope.day_error = true;
-	  	}
-	  	if ($scope.new_slot.times.length == 0) {
-	  		$scope.time_error = true;
-	  	}
-	  	if ($scope.day_error || $scope.time_error) {
-	  		return false;
-	  	}
-	  	var new_slot = $scope.new_slot;
-	  	$scope.menu_item.availability.push(new_slot);
-	  	$scope.new_slot = {days: ['1','2','3','4','5','6','7'], times: []};
-	  	$scope.day_error = false;
-	  	$scope.time_error = false;
-	  }
-
-	  $scope.remove_time = function(index) {
-	  	$scope.new_slot.times.splice(index, 1);
-	  }
-
-	  $scope.remove_slot = function(index) {
-	  	$scope.menu_item.availability.splice(index, 1);
-	  }
-
-	  $scope.daySelected = function(day, index) {
-	  	if (index == null) {
-	  		return $scope.new_slot.days.indexOf(day) >= 0;
-	  	}
-	  	return $scope.menu_item.availability[index]['days'].indexOf(day) >= 0;
-	  }
-
-	  $scope.selectDay = function(event, day, index) {
+	  $scope.selectDay = function(event, day) {
 	  	var checked = event.target.checked;
 	  	if (!checked) {
-	  		if (index == null) {
-		  		var pos = $scope.new_slot.days.indexOf(day);
-				$scope.new_slot.days.splice(pos, 1);
-	  		} else {
-	  			var pos = $scope.menu_item.availability[index].days.indexOf(day);
-	  			$scope.menu_item.availability[index].days.splice(pos, 1);
-	  		}
+  			var pos = $scope.menu_item.availability.days.indexOf(day);
+  			$scope.menu_item.availability.days.splice(pos, 1);
 	  	} else {
-	  		if (index == null) {
-			  $scope.new_slot.days.push(day);
-			} else {
-			  $scope.menu_item.availability[index].days.push(day);
-			}
+		  	$scope.menu_item.availability.days.push(day);
+		}
+		return true;
+	  }
+
+	  $scope.courseSelected = function(course) {
+	  	return $scope.menu_item.availability['courses'].indexOf(course) >= 0;
+	  }
+
+	  $scope.selectCourse = function(event, course) {
+	  	var checked = event.target.checked;
+	  	if (!checked) {
+  			var pos = $scope.menu_item.availability.courses.indexOf(course);
+  			$scope.menu_item.availability.courses.splice(pos, 1);
+	  	} else {
+		  	$scope.menu_item.availability.courses.push(course);
 		}
 		return true;
 	  }
@@ -837,7 +760,7 @@ return resource;
                 return args.max_menu_items;
               }
             },
-            size: '750'
+            size: '1050'
           });
         }
       },
@@ -856,6 +779,9 @@ return resource;
     $scope.totalItems = 0;
     $scope.itemsPerPage = 10;
   	$scope.totalItems = $scope.menu_items.length;
+
+	$scope.days_map = {'1': 'Mon', '2': 'Tue', '3': 'Wed', '4': 'Thu', '5': 'Fri', '6': 'Sat', '7': 'Sun'};
+	$scope.courses_map = {'breakfast': 'Breakfast', 'brunch': 'Brunch', 'lunch': 'Lunch', 'tea': 'Tea', 'dinner': 'Dinner', 'late-night': 'Late-Night'};
 
     $scope.max_menu_items = max_menu_items;
     for (var m = 0; m < $scope.menu_items.length; m++) {
@@ -892,9 +818,9 @@ return resource;
       });
     };
 
-    $scope.openMenuItem = function (id) {
+    $scope.openMenuItem = function (id, schedule) {
     	$scope.cancel();
-    	openModal('menuItemModal', id);
+    	openModal('menuItemModal', id, schedule);
     }
 }]);
 

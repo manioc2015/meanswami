@@ -90,24 +90,7 @@
 		        Your menu item has been scheduled.
 		        </div>
 	        	<div ng-show="menuItemAdded && doSchedule && !scheduled" class="modal-body" style="display: inline-table; width: 100%">
-		        	<b>Select Availability Days and Hours</b><br />
-		        	You can enter your restaurant&#39;s hours of operation if the menu item is always available when you&#39;re open.
-		        	<div style="display: inline-table; width: 100%" ng-repeat="(index, day_slot) in menu_item.availability" id="slot_@{{index}}">
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('1', index)" ng-click="selectDay($event, '1', index)" ng-value="1" />Mon</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('2', index)" ng-click="selectDay($event, '2', index)" ng-value="2" />Tue</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('3', index)" ng-click="selectDay($event, '3', index)" ng-value="3" />Wed</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('4', index)" ng-click="selectDay($event, '4', index)" ng-value="4" />Thu</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('5', index)" ng-click="selectDay($event, '5', index)" ng-value="5" />Fri</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('6', index)" ng-click="selectDay($event, '6', index)" ng-value="6" />Sat</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('7', index)" ng-click="selectDay($event, '7', index)" ng-value="7" />Sun</div>
-			        	<br />
-		            	<button style="float: right; position: relative; bottom: 20px;" class="btn btn-warning" type="button" ng-click="remove_slot(index)">Remove</button>
-			        	<div ng-repeat="(index_time, time_slot) in day_slot['times']">
-				        	From: <select name="start_time" ng-model="time_slot['start_time']" ng-options="hour.value for hour in time_slots track by hour.id"></select>&nbsp;&nbsp;&nbsp;
-				        	To: <select name="end_time" ng-model="time_slot['end_time']" ng-options="hour.value for hour in time_slots track by hour.id"></select>
-			        	</div>
-				        <hr class="schedule" />
-			        </div>
+		        	<b>Select Availability Days and Courses</b><br />
 			        <div style="display: inline-table; width: 100%">
 			        	<span style="color: red;" ng-show="day_error">You must select at least one day.<br /></span>
 			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('1')" ng-click="selectDay($event, '1')" ng-value="1" />Mon</div>
@@ -117,19 +100,13 @@
 			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('5')" ng-click="selectDay($event, '5')" ng-value="5" />Fri</div>
 			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('6')" ng-click="selectDay($event, '6')" ng-value="6" />Sat</div>
 			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('7')" ng-click="selectDay($event, '7')" ng-value="7" />Sun</div>
-			        	<br />
-		            	<button style="float: right; position: relative; bottom: 20px;" class="btn btn-primary" type="button" ng-show="new_slot.days.length && new_slot.times.length" ng-click="add_slot();">Add Slot</button>
-			        	<span style="color: red;" ng-show="time_error">You must provide at least one time range.<br /></span>
-			        	<div ng-repeat="(index, time_slot) in new_slot['times']">
-				        	From: <select name="start_time" ng-model="new_slot['times'][index]['start_time']" ng-options="hour.value for hour in time_slots"></select>&nbsp;&nbsp;&nbsp;
-				        	To: <select name="end_time" ng-model="new_slot['times'][index]['end_time']" ng-options="hour.value for hour in time_slots"></select>
-			            	<button class="btn btn-xs btn-primary" type="button" ng-show="index < new_slot['times'].length" ng-click="remove_time(index);">Remove</button>
-			        	</div>
-			        	<div>
-				        	From: <select name="start_time" ng-model="start_time" ng-options="hour.value for hour in time_slots"></select>&nbsp;&nbsp;&nbsp;
-				        	To: <select name="end_time" ng-model="end_time" ng-options="hour.value for hour in time_slots"></select>
-			            	<button class="btn btn-xs btn-primary" type="button" ng-click="add_time();">Add</button>
-			        	</div>
+			        	<br /><br />
+			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('breakfast')" ng-click="selectCourse($event, 'breakfast')" ng-value="breakfast">Breakfast</div>
+			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('brunch')" ng-click="selectCourse($event, 'brunch')" ng-value="brunch">Brunch</div>
+			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('lunch')" ng-click="selectCourse($event, 'lunch')" ng-value="lunch">Lunch</div>
+			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('tea')" ng-click="selectCourse($event, 'tea')" ng-value="tea">Tea</div>
+			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('dinner')" ng-click="selectCourse($event, 'dinner')" ng-value="dinner">Dinner</div>
+			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('late-night')" ng-click="selectCourse($event, 'late-night')" ng-value="late-night">Late Night</div>
 			        </div>
 			    </div>
 		        <div class="modal-footer">
@@ -138,7 +115,7 @@
 		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && !id" ng-click="create()">Create</button>
 		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && id" ng-click="create()">Update</button>
 		            <button class="btn btn-warning" type="button" ng-show="!menuItemAdded" ng-click="cancel()">Cancel</button>
-		            <button class="btn btn-warning" type="button" ng-show="menuItemAdded && doSchedule && !scheduled && menu_item.availability.length" ng-click="finalize()">Schedule</button>
+		            <button class="btn btn-warning" type="button" ng-show="menuItemAdded && doSchedule && !scheduled" ng-click="finalize()">Schedule</button>
 		            <button class="btn btn-warning" type="button" ng-show="menuItemAdded" ng-click="cancel()">Close</button>
 		        </div>
 		    </script>
