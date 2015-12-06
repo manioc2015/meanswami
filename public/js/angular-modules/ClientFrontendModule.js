@@ -120,24 +120,182 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
 
     return resource;
 })
-.service("MenuItemService", [function() {
-    this.menu_item = {menu_item_id: null, opened: false};
-    this.openModal = function() {
-      this.menu_item.opened = true;
+.factory("RestaurantSignupResource", function ($resource)
+{
+var resource = $resource("/restaurant/signup/:operation",
+  {
+    operation: '@operation'
+  }
+);
+
+resource.prototype.lookupPhoneNumber = function () {
+  return resource.save(
+    {
+      operation: 'lookup',
+      phone_number: this.phoneNumber
+    }).$promise;
+};
+
+resource.prototype.addRestaurant = function (restaurant) {
+  return resource.save(
+    {
+      operation: 'addRestaurant',
+      restaurant_data: restaurant
+    }).$promise;
+};
+
+resource.prototype.addClient = function (client) {
+  return resource.save(
+    {
+      operation: 'addClient',
+      client_data: client
+    }).$promise;
+};
+
+return resource;
+})
+.factory("MenuItemCountService", [function() {
+    this.menu_item_count = {};
+    this.loaded = true;
+    this.mass_set_counts = function(counts) {
+      this.menu_item_count = counts;
     }
-    this.getOpened = function() {
-      return this.menu_item.opened;
+    this.set_single_active = function(restaurant_id, active_count) {
+    	this.menu_item_count['Restaurant'][restaurant_id]['active'] = active_count;
     }
-    this.setMenuItemId = function(menu_item_id) {
-      this.menu_item.opened = false;
-      this.menu_item.menu_item_id = menu_item_id;
-    }
-    this.getMenuItemId = function() {
-      return this.menu_item.menu_item_id;
+    this.set_single_total = function(restaurant_id, total_count) {
+    	this.menu_item_count['Restaurant'][restaurant_id]['total'] = total_count;
     }
     return this;
 }])
-  .controller("MenuItemInitCtrl", ['$scope', '$resource', 'RestaurantDataResource', '$uibModal', 'MenuItemService', function($scope, $resource, RestaurantDataResource, $uibModal, MenuItemService)
+  .controller("RestaurantSignupController", function($scope, $resource, RestaurantSignupResource)
+  {
+    $scope.lookupComplete = false;
+    $scope.hasNoResults = true;
+    $scope.selectedRestaurantIndex = 0;
+    $scope.showRestaurantFormStatus = false;
+    $scope.showClientFormStatus = false;
+    $scope.promptedToRegister = false;
+    $scope.allResultsSignedUp = false;
+
+    $scope.lookupRestaurant = function() {
+      $scope.lookupComplete = false;
+      $scope.hasNoResults = true;
+      $scope.selectedRestaurantIndex = 0;
+      $scope.showRestaurantFormStatus = false;
+      $scope.showClientFormStatus = false;
+      $scope.promptedToRegister = false;
+      $scope.allResultsSignedUp = false;
+      var resource = new RestaurantSignupResource();
+      resource.phoneNumber = $scope.phoneNumber;
+      var promise = resource.lookupPhoneNumber();
+      promise.then(function(data) {
+        if (data['success']) {
+          data = data.data;
+        }
+        if (data.length == 0) {
+          $scope.hasNoResults = true;
+        } else {
+          $scope.hasNoResults = false;
+          $scope.restaurants = data;
+          var allResultsSignedUp = true;
+          for (var i in data) {
+            if (!data[i]['signed_up']) {
+              $scope.selectedRestaurantIndex = i;
+              allResultsSignedUp = false;
+              break;
+            }
+          }
+          $scope.allResultsSignedUp = allResultsSignedUp;
+        }
+        $scope.lookupComplete = true;
+      },
+      function(response, status) {
+          $scope.hasNoResults = true;
+          $scope.lookupComplete = true;
+      });
+    }
+
+    $scope.showRestaurantForm = function() {
+      $scope.showRestaurantFormStatus = false;
+      $scope.showClientFormStatus = false;
+      $scope.promptedToRegister = false;
+      if (parseInt($scope.selectedRestaurantIndex) >= 0 ) {
+        var index = $scope.selectedRestaurantIndex;
+        this.restaurant = {};
+        this.restaurant.name = this.restaurants[index].name;
+        this.restaurant.sp_listing_id = this.restaurants[index].sp_listing_id;
+        this.restaurant.yelp_listing_id = this.restaurants[index].yelp_listing_id;
+        this.restaurant.is_claimed_on_yelp = this.restaurants[index].is_claimed_on_yelp;
+        this.restaurant.address1 = this.restaurants[index].address1;
+        this.restaurant.address2 = this.restaurants[index].address2;
+        this.restaurant.cross_streets = this.restaurants[index].cross_streets;
+        this.restaurant.city = this.restaurants[index].city;
+        this.restaurant.state = this.restaurants[index].state;
+        this.restaurant.zipcode = this.restaurants[index].zipcode;
+        this.restaurant.country = this.restaurants[index].country;
+        this.restaurant.phone = this.restaurants[index].phone;
+        this.restaurant.lat = this.restaurants[index].lat;
+        this.restaurant.lon = this.restaurants[index].lon;
+        this.restaurant.website = '';
+        this.restaurant.description = '';
+        $scope.showRestaurantFormStatus = true;
+      }
+    }
+
+    $scope.showClientForm = function() {
+      $scope.showClientFormStatus = false;
+      $scope.promptedToRegister = false;
+      this.client = {};
+      this.client.client_name = '';
+      this.client.business_name = this.restaurant.name;
+      this.client.address1 = this.restaurant.address1;
+      this.client.address2 = this.restaurant.address2;
+      this.client.city = this.restaurant.city;
+      this.client.state = this.restaurant.state;
+      this.client.zipcode = this.restaurant.zipcode;
+      this.client.country = this.restaurant.country;
+      this.client.phone1 = this.restaurant.phone;
+      this.client.phone2 = '';
+      $scope.showRestaurantFormStatus = false;
+      $scope.showClientFormStatus = true;
+    }
+
+    $scope.selectRestaurant = function(index) {
+      $scope.selectedRestaurantIndex = index;
+    }
+
+    $scope.doNext = function() {
+      if (!$scope.showRestaurantFormStatus && !$scope.showClientFormStatus) {
+        $scope.showRestaurantForm();
+      } else if (!$scope.showClientFormStatus) {
+        var resource = new RestaurantSignupResource();
+        var promise = resource.addRestaurant(this.restaurant);
+        promise.then(function(data) {
+          if (data['action'] == 'newClient') {
+            $scope.showClientForm();
+          } else if (data['action'] == 'redirect') {
+            window.location.href = data['url'];
+          }
+        },
+        function(response, status) {
+          alert('Something went wrong... please try again.');
+        });
+      } else if (!$scope.promptedToRegister) {
+        var resource = new RestaurantSignupResource();
+        var promise = resource.addClient(this.client);
+        promise.then(function(data) {
+          if (data['action'] == 'redirect') {
+            window.location.href = data['url'];
+          }
+        },
+        function(response, status) {
+          alert('Something went wrong... please try again.');
+        });
+      }
+    }
+  })
+  .controller("MenuItemInitCtrl", ['$scope', '$resource', 'RestaurantDataResource', '$uibModal', function($scope, $resource, RestaurantDataResource, $uibModal)
   {
     $scope.lookupComplete = false;
     $scope.menu_item = {};
@@ -188,7 +346,7 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
       	}, 
       	cuisines: [], 
       	diets: [], 
-      	allergens: [], 
+      	allergens: [11,12,13,14,15,16,17,18,19,20,21,22,24,25,26], 
       	organic: 1, 
       	spicy: 303,
       	availability: []
@@ -209,7 +367,7 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
 		  });
 	  }
     }
-  }]).controller('MenuItemCtrl', ['$scope', '$uibModalInstance', 'RestaurantDataResource', 'data', function ($scope, $uibModalInstance, RestaurantDataResource, data) {
+  }]).controller('MenuItemCtrl', ['$scope', '$uibModalInstance', 'RestaurantDataResource', 'MenuItemCountService', 'data', function ($scope, $uibModalInstance, RestaurantDataResource, MenuItemCountService, data) {
   	  $scope.cuisines1 = [
   	  	{id: 200, value: 'American'},
 		{id: 241, value: 'Argentinian'},
@@ -578,9 +736,16 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
         	if (data['success']) {
         		$scope.menuItemAdded = true;
         		$scope.menu_item.id = data['menu_item_id'];
+        		if (MenuItemCountService.loaded) {
+		            MenuItemCountService.set_single_total($scope.menu_item.restaurant_id, MenuItemCountService.menu_item_count['Restaurant'][$scope.menu_item.restaurant_id]['total'] + 1);
+		        }
         		if (data['inactive']) {
         			$scope.menuItemInactive = true;
-        		}
+        		} else {
+	        		if (MenuItemCountService.loaded) {
+		            MenuItemCountService.set_single_active($scope.menu_item.restaurant_id, MenuItemCountService.menu_item_count['Restaurant'][$scope.menu_item.restaurant_id]['active'] + 1);
+    	    		}
+	    		}
 	    	}
     	},
         function(response, status) {
@@ -607,12 +772,13 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
 	  $scope.cancel = function () {
 	    $uibModalInstance.dismiss('cancel');
 	  };
-}]).controller("RestaurantFranchiseManageController", ['$scope', '$resource', 'RestaurantFranchiseManageResource', function($scope, $resource, RestaurantFranchiseManageResource)
+}]).controller("RestaurantFranchiseManageController", ['$scope', '$resource', 'RestaurantFranchiseManageResource', 'MenuItemCountService', function($scope, $resource, RestaurantFranchiseManageResource, MenuItemCountService)
   {
     $scope.landing = true;
     $scope.menuItems = false;
-    $scope.currentPage = 0;
-    $scope.pageSize = 50;
+    $scope.currentPage = 1;
+    $scope.totalItems = 0;
+    $scope.itemsPerPage = 50;
     $scope.menu_items = {};
 
     $scope.numberOfPages=function(){
@@ -626,8 +792,10 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
       promise.then(function(data) {
         if (data['success']) {
           $scope.restaurants = data['restaurants'];
+          $scope.totalItems = data['restaurants'].length;
           $scope.franchises = data['franchises'];
           $scope.menu_item_count = data['menu_items'];
+          MenuItemCountService.mass_set_counts($scope.menu_item_count);
           $scope.lookupComplete = true;
       }
       },
@@ -677,13 +845,18 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
         alert('Something went wrong... please try again.');
       });
     });
-}]).controller("MenuItemsCtrl", ['$scope', '$uibModalInstance', 'RestaurantFranchiseManageResource', 'spinnerService', 'MenuItemService', 'data', 'restaurant_id', 'restaurant_name', 'max_menu_items', function ($scope, $uibModalInstance, RestaurantFranchiseManageResource, spinnerService, MenuItemService, data, restaurant_id, restaurant_name, max_menu_items)
+}]).controller("MenuItemsCtrl", ['$scope', '$uibModalInstance', 'RestaurantFranchiseManageResource', 'spinnerService', 'MenuItemCountService', 'data', 'restaurant_id', 'restaurant_name', 'max_menu_items', function ($scope, $uibModalInstance, RestaurantFranchiseManageResource, spinnerService, MenuItemCountService, data, restaurant_id, restaurant_name, max_menu_items)
 {
     $scope.lookupComplete = false;
     $scope.menu_items = data;
     $scope.restaurant_id = restaurant_id;
     $scope.restaurant_name = restaurant_name;
     $scope.num_active = 0;
+    $scope.currentPage = 1;
+    $scope.totalItems = 0;
+    $scope.itemsPerPage = 20;
+  	$scope.totalItems = $scope.menu_items.length;
+
     $scope.max_menu_items = max_menu_items;
     for (var m = 0; m < $scope.menu_items.length; m++) {
       if ($scope.menu_items[m]['active']) {
@@ -707,7 +880,8 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
           if (val && data['inactive']) {
             $scope.menu_items[index].active = false;
           } else {
-            $scope.num_active += (val && !data['inactive'] ? 1 : -1);            
+            $scope.num_active += (val && !data['inactive'] ? 1 : -1);
+            MenuItemCountService.set_single_active($scope.restaurant_id, $scope.num_active);
           }
           spinnerService.hide('spinner');
         }

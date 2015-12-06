@@ -14,7 +14,7 @@
 						<input name="tagline" type="text" maxlength="255" style="width: 720px;" ng-model="menu_item.item.tagline" /><br /><br />
 			        	<b>Main Ingredients</b>&nbsp;(Separate with commas)<br />
 			        	<textarea name="main_ingredients" style="width: 720px;" rows="2" ng-model="menu_item.item.main_ingredients"></textarea><br /><br />
-			        	<b>Price Range</b><br />
+			        	<b>Price Range (Fill in either one if single price)</b><br />
 			        	Minimum: <input name="min_price" type="text" maxlength="7" style="width: 80px;" ng-model="menu_item.prices.min_price" />&nbsp;
 			        	Maximum: <input name="max_price" type="text" maxlength="7" style="width: 80px;" ng-model="menu_item.prices.max_price" /><br />
 		        	</div>
@@ -84,7 +84,7 @@
 		        Otherwise, it&#39;ll always be advertised.
 		        </div>
 		        <div ng-show="menuItemAdded && !doSchedule && menuItemInactive" class="modal-body" style="display: inline-table; width: 100%">
-		        Your menu item has been <span ng-show="!id">created</span><span ng-show="id">updated</span>, but it is inactive because you&#39;ve exceeded the number of menu items allowed for the restaurant you&#39;ve selected. Click <a href="/restaurant/manage/adslots?restaurant_id=@{{restaurant.id}}">here</a> to increase the number of menu items allowed for the restaurant.
+		        Your menu item has been <span ng-show="!id">created</span><span ng-show="id">updated</span>, but it is inactive because you&#39;ve exceeded the number of menu items allowed for the restaurant you&#39;ve selected. Click <a href="/restaurant/manage/adslots?restaurant_id=@{{menu_item.restaurant_id}}&&franchise_id=@{{menu_item.franchise_id}}">here</a> to increase the number of menu items allowed for the restaurant.
 		        </div>
 		        <div ng-show="menuItemAdded && scheduled" class="modal-body" style="display: inline-table; width: 100%">
 		        Your menu item has been scheduled.
@@ -135,7 +135,7 @@
 		        <div class="modal-footer">
 		            <button class="btn btn-primary" type="button" ng-show="step>1 && !menuItemAdded" ng-click="doBack()">Back</button>
 		            <button class="btn btn-primary" type="button" ng-show="step<4 && !menuItemAdded" ng-click="doNext()">Next</button>
-		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdde && !id" ng-click="create()">Create</button>
+		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && !id" ng-click="create()">Create</button>
 		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && id" ng-click="create()">Update</button>
 		            <button class="btn btn-warning" type="button" ng-show="!menuItemAdded" ng-click="cancel()">Cancel</button>
 		            <button class="btn btn-warning" type="button" ng-show="menuItemAdded && doSchedule && !scheduled && menu_item.availability.length" ng-click="finalize()">Schedule</button>
@@ -184,14 +184,14 @@
 					</li>
 					@endauth
 				    @permission('view_invoices')
-					<li>
+					<!--li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Invoices <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
 							    <li>{!! link_to('invoices/view', 'View Invoices') !!}</li>
 							</ul>
 						</li>
-					</li>
+					</li-->
 					@endauth
 				</ul>
 

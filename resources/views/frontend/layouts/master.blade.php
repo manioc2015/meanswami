@@ -30,9 +30,7 @@
         {!! HTML::script("js/vendor/angular-modules.js") !!}
         {!! HTML::script("js/vendor/ui-bootstrap.js") !!}
         {!! HTML::script("js/vendor/angular-spinners.js") !!}
-        @permissions(['view_restaurants', 'create_menu_items'])
         {!! HTML::script("js/angular-modules/ClientFrontendModule.js") !!}
-        @endauth
     </head>
     <body>
         <!--[if lt IE 8]>

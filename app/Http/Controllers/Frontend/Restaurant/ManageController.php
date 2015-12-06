@@ -93,14 +93,16 @@ class ManageController extends Controller {
 		} catch (ModelNotFoundException $e) {
 			return $this->response->error('Property not found.', 404);
 		}
-		$curr_active_menu_items = MenuItem::getNumActive($input['item']['property_id'], $input['item']['property_type']);
-		$input['item']['active'] = ($curr_active_menu_items < $max_menu_items) && isset_or($input['item']['active'], true);
 		$menu_item = null;
+		$wasActive = false;
+		if ($id) {
+			$menu_item = MenuItem::find($id);
+			$wasActive = $menu_item->active;
+		}
+		$curr_active_menu_items = MenuItem::getNumActive($input['item']['property_id'], $input['item']['property_type']);
+		$input['item']['active'] = (($curr_active_menu_items < $max_menu_items) && isset_or($input['item']['active'], true)) || (($curr_active_menu_items >= $max_menu_items) && isset_or($input['item']['active'], true) && $wasActive);
 		try {
 			DB::transaction(function () use ($id, $input, &$menu_item) {
-				if ($id) {
-					$menu_item = MenuItem::find($id);
-				}
 				$validPropertyClientsNew = $input['item']['property_type'] == 'Franchise' ? Franchise::getOwnerClientIds($input['item']['property_id']) : Restaurant::getOwnerClientIds($input['item']['property_id']);
 				if (!$menu_item) {
 					$input['item']['is_test_item'] = true;

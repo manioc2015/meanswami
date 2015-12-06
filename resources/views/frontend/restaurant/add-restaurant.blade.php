@@ -2,9 +2,7 @@
 
 @section('content')
 
-   {!! HTML::script("js/angular-modules/RestaurantSignup.js") !!}
-
-    <div class="row" ng-module="RestaurantSignupModule">
+    <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <div ng-controller="RestaurantSignupController">
                 <div class="panel panel-default">
