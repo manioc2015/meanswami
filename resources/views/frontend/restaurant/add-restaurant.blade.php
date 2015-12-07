@@ -68,7 +68,7 @@
                                     {!! Form::label('restaurant_address2', 'Address Line 2', ['class' => 'col-md-12 control-label']) !!}
                                 </td>
                                 <td class="col-md-8">
-                                    {!! Form::input('text', 'restaurant_address2', old('restaurant_address2'), ['readonly' => 'readonly', 'ng-model' => 'restaurant.address2', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
+                                    {!! Form::input('text', 'restaurant_address2', old('restaurant_address2'), ['ng-model' => 'restaurant.address2', 'class' => 'form-control', 'style' => 'width: 360px; display: inline;']) !!}
                                 </td>
                             </tr>
                             <tr>

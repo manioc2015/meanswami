@@ -117,8 +117,9 @@ DROP TABLE IF EXISTS "franchises";
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE "franchises" (
-  "id" int  NOT NULL,
+  "id" serial  NOT NULL,
   "franchise_name" varchar(127) NOT NULL DEFAULT '',
+  max_menu_items int not null default 1,
   "created_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "updated_at" timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   "deleted_at" timestamp DEFAULT NULL,

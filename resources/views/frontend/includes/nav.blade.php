@@ -9,11 +9,11 @@
 		        <div ng-show="!menuItemAdded" class="modal-body" style="display: inline-table; width: 100%">
 		        	<div ng-show="step==1" style="display: inline-table; width: 100%">
 			        	<b>Name</b><br />
-						<input name="name" type="text" maxlength="127" style="width: 720px;" ng-model="menu_item.item.name" /></td><br /><br />
+						<input name="name" type="text" maxlength="127" style="width: 100%;" ng-model="menu_item.item.name" /></td><br /><br />
 						<b>Short Description</b><br />
-						<input name="tagline" type="text" maxlength="255" style="width: 720px;" ng-model="menu_item.item.tagline" /><br /><br />
+						<input name="tagline" type="text" maxlength="255" style="width: 100%;" ng-model="menu_item.item.tagline" /><br /><br />
 			        	<b>Main Ingredients</b>&nbsp;(Separate with commas)<br />
-			        	<textarea name="main_ingredients" style="width: 720px;" rows="2" ng-model="menu_item.item.main_ingredients"></textarea><br /><br />
+			        	<textarea name="main_ingredients" style="width: 100%;" rows="2" ng-model="menu_item.item.main_ingredients"></textarea><br /><br />
 			        	<b>Price Range (Fill in either one if single price)</b><br />
 			        	Minimum: <input name="min_price" type="text" maxlength="7" style="width: 80px;" ng-model="menu_item.prices.min_price" />&nbsp;
 			        	Maximum: <input name="max_price" type="text" maxlength="7" style="width: 80px;" ng-model="menu_item.prices.max_price" /><br />
@@ -52,70 +52,77 @@
 			        	</div>
 		        	</div>
 		        	<div ng-show="step==4" style="display: inline-table; width: 100%">
-	        			<b>Select Restaurant</b><br />
-	        			<table width="100%">
-	        				<tr ng-repeat="restaurant in restaurants">
-	        					<td ng-show="restaurant.franchise_id" style="width: 100%;">
-	        						<table width="100%">
-	        							<tr>
-	        								<td class="col-sm-1"><input type="radio" name="property" ng-checked="franchiseSelected(restaurant.franchise_id)" ng-click="selectFranchise(restaurant.franchise_id)" ng-value="restaurant.franchise_id" /></td>
-	        								<td class="col-sm-8">@{{restaurant.franchise_name}} (Entire Franchise)</td>
-	        							</tr>
-	        							<tr ng-repeat="franchiseRestaurant in restaurant.restaurants">
-	        								<td class="col-sm-1"><input type="radio" name="property" ng-checked="restaurantSelected($parent.restaurant.franchise_id, franchiseRestaurant.id)" ng-click="selectRestaurant($parent.restaurant.franchise_id, franchiseRestaurant.id)" ng-value="franchiseRestaurant.id" /></td>
-	        								<td class="col-sm-8">@{{franchiseRestaurant.name}} (@{{franchiseRestaurant.address1}} @{{franchiseRestaurant.city}}, @{{franchiseRestaurant.state}} @{{franchiseRestaurant.zipcode}})</td>
-	        							</tr>
-	        						</table>
-	        					</td>
-	        					<td ng-show="!restaurant.franchise_id" style="width: 100%">
-	        						<table width="100%">
-	        							<tr>
-	        								<td class="col-sm-1"><input type="radio" name="property" ng-checked="restaurantSelected(null, restaurant.id)" ng-click="selectRestaurant(null, restaurant.id)" ng-value="restaurant.id" /></td>
-	        								<td class="col-sm-8">@{{restaurant.name}} (@{{restaurant.address1}} @{{restaurant.city}}, @{{restaurant.state}} @{{restaurant.zipcode}})</td>
-	        							</tr>
-	        						</table>
-	        					</td>
-	        				</tr>
-	        			</table>
+	        			<b>Select Property</b><br />
+    					<div role="tabpanel">
+                          <!-- Nav tabs -->
+                          <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" ng-class="{active: restaurantIsIndy()}"><a id="indy-tab" href="#restaurant-select" aria-controls="restaurant-select" role="tab" data-toggle="tab">Restaurants</a></li>
+                            <li role="presentation" ng-repeat="(index, restaurant) in restaurants" ng-class="{active: restaurantBelongsToFranchise(index)}" ng-show="restaurant.franchise_id"><a id="@{{restaurant.franchise_id}}-tab" href="#franchise-select_@{{restaurant.franchise_id}}" aria-controls="franchise-select" role="tab" data-toggle="tab">@{{restaurant.franchise_name}}</a></li>
+                          </ul>
+                          <div class="tab-content">
+                            <div role="tabpanel" ng-class="{active: restaurantIsIndy()}" class="tab-pane" id="restaurant-select">
+        						<table ng-show="restaurants['data']['restaurants'].length" width="100%">
+        							<tr ng-repeat="indyRestaurant in restaurants['data']['restaurants']">
+        								<td class="col-sm-12"><input type="radio" name="indyProperty" ng-checked="restaurantSelected(null, indyRestaurant.id)" ng-click="selectRestaurant(null, indyRestaurant.id)" ng-value="indyRestaurant.id" />
+        								@{{indyRestaurant.name}} (@{{indyRestaurant.address1}} @{{indyRestaurant.city}}, @{{indyRestaurant.state}} @{{indyRestaurant.zipcode}})</td>
+        							</tr>
+        						</table>
+                            </div>
+                            <div role="tabpanel" class="tab-pane" ng-repeat="(index, franchise) in restaurants" ng-class="{active: restaurantBelongsToFranchise(index)}" id="franchise-select_@{{franchise.franchise_id}}">
+                            	<table ng-show="franchise['restaurants'].length" width="100%">
+	    							<tr>
+	    								<td class="col-sm-12"><input type="radio" name="franProperty" ng-checked="franchiseSelected(franchise.franchise_id)" ng-click="selectFranchise(franchise.franchise_id)" ng-value="franchise.franchise_id" />
+	    								@{{franchise.franchise_name}} (Entire Franchise)</td>
+	    							</tr>
+        							<tr ng-repeat="franchiseRestaurant in franchise.restaurants">
+        								<td class="col-sm-12"><input type="radio" name="franProperty" ng-checked="restaurantSelected(franchise.franchise_id, franchiseRestaurant.id)" ng-click="selectRestaurant(franchise.franchise_id, franchiseRestaurant.id)" ng-value="franchiseRestaurant.id" />
+        								@{{franchiseRestaurant.name}} (@{{franchiseRestaurant.address1}} @{{franchiseRestaurant.city}}, @{{franchiseRestaurant.state}} @{{franchiseRestaurant.zipcode}})</td>
+        							</tr>
+			        			</table>
+                            </div>
+                          </div>
+                        </div>
 		        	</div>
 		        </div>
-		        <div ng-show="menuItemAdded && !doSchedule && !menuItemInactive" class="modal-body" style="display: inline-table; width: 100%">
+		        <div ng-show="menuItemAdded && !doSchedule && !menuItemsExceeded" class="modal-body" style="display: inline-table; width: 100%">
 		        Your menu item has been <span ng-show="!id">created</span><span ng-show="id">updated</span>. Click <a href="javascript:void(0);" ng-click="schedule();">here</a> to schedule when this menu item will be advertised.
 		        Otherwise, it&#39;ll always be advertised.
 		        </div>
-		        <div ng-show="menuItemAdded && !doSchedule && menuItemInactive" class="modal-body" style="display: inline-table; width: 100%">
+		        <div ng-show="menuItemAdded && !doSchedule && menuItemsExceeded" class="modal-body" style="display: inline-table; width: 100%">
 		        Your menu item has been <span ng-show="!id">created</span><span ng-show="id">updated</span>, but it is inactive because you&#39;ve exceeded the number of menu items allowed for the restaurant you&#39;ve selected. Click <a href="/restaurant/manage/adslots?restaurant_id=@{{menu_item.restaurant_id}}&&franchise_id=@{{menu_item.franchise_id}}">here</a> to increase the number of menu items allowed for the restaurant.
 		        </div>
 		        <div ng-show="menuItemAdded && scheduled" class="modal-body" style="display: inline-table; width: 100%">
 		        Your menu item has been scheduled.
 		        </div>
 	        	<div ng-show="menuItemAdded && doSchedule && !scheduled" class="modal-body" style="display: inline-table; width: 100%">
-		        	<b>Select Availability Days and Courses</b><br />
-			        <div style="display: inline-table; width: 100%">
-			        	<span style="color: red;" ng-show="day_error">You must select at least one day.<br /></span>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('1')" ng-click="selectDay($event, '1')" ng-value="1" />Mon</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('2')" ng-click="selectDay($event, '2')" ng-value="2" />Tue</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('3')" ng-click="selectDay($event, '3')" ng-value="3" />Wed</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('4')" ng-click="selectDay($event, '4')" ng-value="4" />Thu</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('5')" ng-click="selectDay($event, '5')" ng-value="5" />Fri</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('6')" ng-click="selectDay($event, '6')" ng-value="6" />Sat</div>
-			        	<div style="width: 12%; display: inline-block;"><input name="day" type="checkbox" ng-checked="daySelected('7')" ng-click="selectDay($event, '7')" ng-value="7" />Sun</div>
-			        	<br /><br />
-			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('breakfast')" ng-click="selectCourse($event, 'breakfast')" ng-value="breakfast">Breakfast</div>
-			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('brunch')" ng-click="selectCourse($event, 'brunch')" ng-value="brunch">Brunch</div>
-			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('lunch')" ng-click="selectCourse($event, 'lunch')" ng-value="lunch">Lunch</div>
-			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('tea')" ng-click="selectCourse($event, 'tea')" ng-value="tea">Tea</div>
-			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('dinner')" ng-click="selectCourse($event, 'dinner')" ng-value="dinner">Dinner</div>
-			        	<div style="width: 12%; display: inline-block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('late-night')" ng-click="selectCourse($event, 'late-night')" ng-value="late-night">Late Night</div>
+		        	<b>Select Availability Days and Meal Courses</b><br /><br />
+		        	<span style="color: red;" ng-show="day_error">You must select at least one day.<br /></span>
+		        	<span style="color: red;" ng-show="course_error">You must select at least one meal course.<br /></span>
+			        <div style="display: inline-table; width: 33%">
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('1')" ng-click="selectDay($event, '1')" ng-value="1" />Mon</div>
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('2')" ng-click="selectDay($event, '2')" ng-value="2" />Tue</div>
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('3')" ng-click="selectDay($event, '3')" ng-value="3" />Wed</div>
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('4')" ng-click="selectDay($event, '4')" ng-value="4" />Thu</div>
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('5')" ng-click="selectDay($event, '5')" ng-value="5" />Fri</div>
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('6')" ng-click="selectDay($event, '6')" ng-value="6" />Sat</div>
+			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('7')" ng-click="selectDay($event, '7')" ng-value="7" />Sun</div>
+			        </div>
+			        <div style="display: inline-table; width: 33%">
+			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('1')" ng-click="selectCourse($event, '1')" ng-value="1">Breakfast</div>
+			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('2')" ng-click="selectCourse($event, '2')" ng-value="2">Brunch</div>
+			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('3')" ng-click="selectCourse($event, '3')" ng-value="3">Lunch</div>
+			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('4')" ng-click="selectCourse($event, '4')" ng-value="4">Tea</div>
+			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('5')" ng-click="selectCourse($event, '5')" ng-value="5">Dinner</div>
+			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('6')" ng-click="selectCourse($event, '6')" ng-value="6">Late-Night</div>
 			        </div>
 			    </div>
 		        <div class="modal-footer">
-		            <button class="btn btn-primary" type="button" ng-show="step>1 && !menuItemAdded" ng-click="doBack()">Back</button>
+		            <button class="btn btn-warning" type="button" ng-show="step>1 && !menuItemAdded" ng-click="doBack()">Back</button>
 		            <button class="btn btn-primary" type="button" ng-show="step<4 && !menuItemAdded" ng-click="doNext()">Next</button>
-		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && !id" ng-click="create()">Create</button>
-		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && id" ng-click="create()">Update</button>
+		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && !id" ng-click="saveMenuItem()">Create</button>
+		            <button class="btn btn-primary" type="button" ng-show="step==4 && !menuItemAdded && id" ng-click="saveMenuItem()">Update</button>
+		            <button class="btn btn-primary" type="button" ng-show="menuItemAdded && doSchedule && !scheduled" ng-click="finalize()">Schedule</button>
 		            <button class="btn btn-warning" type="button" ng-show="!menuItemAdded" ng-click="cancel()">Cancel</button>
-		            <button class="btn btn-warning" type="button" ng-show="menuItemAdded && doSchedule && !scheduled" ng-click="finalize()">Schedule</button>
 		            <button class="btn btn-warning" type="button" ng-show="menuItemAdded" ng-click="cancel()">Close</button>
 		        </div>
 		    </script>
@@ -143,7 +150,7 @@
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Restaurants <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-							    <li>{!! link_to('restaurant/manage', 'My Restaurants') !!}</li>
+							    <li>{!! link_to('restaurant/manage', 'My Properties') !!}</li>
 							</ul>
 						</li>
 					</li>

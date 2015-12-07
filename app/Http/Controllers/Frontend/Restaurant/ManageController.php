@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Contracts\Auth\Guard;
 use App\Models\Client\Client;
 use App\Models\Restaurant\Restaurant;
+use App\Models\Restaurant\Franchise;
 use App\Models\Restaurant\MenuItem;
 use App\Models\Restaurant\MenuItemPrice;
 use App\Models\Restaurant\MenuItemAttribute;
@@ -68,7 +69,10 @@ class ManageController extends Controller {
 		}
 		$menuItem = MenuItem::find($menu_item_id);
 		if ($menuItem) {
-			$menuItem->availability = json_encode($request->input('availability'));
+			$availability = $request->input('availability');
+			sort($availability['days']);
+			sort($availability['courses']);
+			$menuItem->availability = json_encode($availability);
 			$menuItem->save();
 			return $this->response->array(array('success' => true));
 		}
@@ -94,13 +98,31 @@ class ManageController extends Controller {
 			return $this->response->error('Property not found.', 404);
 		}
 		$menu_item = null;
-		$wasActive = false;
+		$wasActive = true;
+		$oldPropertyId = null;
+		$oldPropertyType = 'Restaurant';
 		if ($id) {
 			$menu_item = MenuItem::find($id);
 			$wasActive = $menu_item->active;
+			$oldPropertyId = $menu_item->property_id;
+			$oldPropertyType = $menu_item->property_type;
 		}
 		$curr_active_menu_items = MenuItem::getNumActive($input['item']['property_id'], $input['item']['property_type']);
-		$input['item']['active'] = (($curr_active_menu_items < $max_menu_items) && isset_or($input['item']['active'], true)) || (($curr_active_menu_items >= $max_menu_items) && isset_or($input['item']['active'], true) && $wasActive);
+		$new_active_menu_items = $curr_active_menu_items;
+		$input['item']['active'] = (($curr_active_menu_items < $max_menu_items) && isset_or($input['item']['active'], true)) || (($curr_active_menu_items >= $max_menu_items) && isset_or($input['item']['active'], true));
+		$increment = 0;
+		if ($input['item']['property_type'] == $oldPropertyType && $input['item']['property_id'] == $oldPropertyId) {
+			if (isset_or($input['item']['active'], true) && !$wasActive) {
+				$increment = 1;
+			} else if (!isset_or($input['item']['active'], true) && $wasActive){
+				$increment = -1;
+			}
+		} else if (isset_or($input['item']['active'], true)) {
+			$increment = 1;
+		} else {
+			$increment = -1;
+		}
+		$new_active_menu_items += $increment;
 		try {
 			DB::transaction(function () use ($id, $input, &$menu_item) {
 				$validPropertyClientsNew = $input['item']['property_type'] == 'Franchise' ? Franchise::getOwnerClientIds($input['item']['property_id']) : Restaurant::getOwnerClientIds($input['item']['property_id']);
@@ -173,7 +195,8 @@ class ManageController extends Controller {
 		} catch (Exception $e) {
 			return $this->response->error($e->getMessage(), 404);
 		}
-		return $this->response->array(array('success' => true, 'menu_item_id' => $menu_item->id, 'inactive' => !$input['item']['active']));
+		$old_active_menu_items = MenuItem::getNumActive($oldPropertyId, $oldPropertyType);
+		return $this->response->array(array('success' => true, 'menu_item_id' => $menu_item->id, 'old_property_id' => $oldPropertyId, 'old_property_type' => $oldPropertyType, 'new_property_id' => $input['item']['property_id'], 'new_property_type' => $input['item']['property_type'], 'inactive' => !$input['item']['active'], 'old_active' => $old_active_menu_items, 'new_active' => $new_active_menu_items, 'exceeded' => ($curr_active_menu_items >= $max_menu_items && $curr_active_menu_items == $new_active_menu_items)));
 	}
 
 	public function getMenuItem(Request $request) {
@@ -187,10 +210,11 @@ class ManageController extends Controller {
 					$ret['item']['name'] = $menu_item->name;
 					$ret['item']['tagline'] = $menu_item->tagline;
 					$ret['item']['main_ingredients'] = $menu_item->main_ingredients;
+					$ret['item']['active'] = $menu_item->active;
 					if ($menu_item->property_type == 'Restaurant') {
 						$ret['restaurant_id'] = $menu_item->property_id;
 						$ret['franchise_id'] = null;
-					} else {
+					} else if ($menu_item->property_type == 'Franchise'){
 						$ret['restaurant_id'] = null;
 						$ret['franchise_id'] = $menu_item->property_id;
 					}
@@ -218,7 +242,7 @@ class ManageController extends Controller {
 					$ret['spicy'] = $spicy->attribute_id;
 					$ret['availability'] = json_decode($menu_item->availability, true);
 					if (!is_array($ret['availability'])) {
-						$ret['availability'] = array('days' => array(), 'courses' => array());
+						$ret['availability'] = array('days' => array('1','2','3','4','5','6','7'), 'courses' => array('3','4','5'));
 					}
 					return $this->response->array(array('success' => true, 'data' => $ret));
 				}

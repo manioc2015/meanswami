@@ -58,7 +58,7 @@ class MenuItem extends BaseModel {
 			LEFT JOIN restaurants r ON (r.id=mi.property_id AND mi.property_type='Restaurant' AND r.deleted_at IS NULL)
 			LEFT JOIN franchises f ON (f.id=mi.property_id AND mi.property_type='Franchise')
 			WHERE mi.property_id=? AND mi.property_type=? AND cp.client_id=? AND mi.deleted_at IS NULL $activeSql
-			ORDER BY mi.active DESC, mi.created_at DESC";
+			ORDER BY mi.active DESC, mi.updated_at DESC";
 		$res = DB::select($sql, array($id, $type, $client_id));
 		foreach ($res as &$row) {
 			$row->availability = json_decode($row->availability, true);
