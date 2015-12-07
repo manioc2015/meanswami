@@ -34,7 +34,8 @@ class ManageController extends Controller {
 	}
 
 	public function getStats(Request $request) {
-		$properties = Client::getProperties($this->client->id);
+		$franchise_id = $request->input('franchise_id');
+		$properties = Client::getProperties($this->client->id, $franchise_id);
 		$restaurants = array();
 		$franchises = array();
 		if (isset($properties['data'])) {
@@ -109,7 +110,6 @@ class ManageController extends Controller {
 		}
 		$curr_active_menu_items = MenuItem::getNumActive($input['item']['property_id'], $input['item']['property_type']);
 		$new_active_menu_items = $curr_active_menu_items;
-		$input['item']['active'] = (($curr_active_menu_items < $max_menu_items) && isset_or($input['item']['active'], true)) || (($curr_active_menu_items >= $max_menu_items) && isset_or($input['item']['active'], true));
 		$increment = 0;
 		if ($input['item']['property_type'] == $oldPropertyType && $input['item']['property_id'] == $oldPropertyId) {
 			if (isset_or($input['item']['active'], true) && !$wasActive) {
@@ -120,9 +120,10 @@ class ManageController extends Controller {
 		} else if (isset_or($input['item']['active'], true)) {
 			$increment = 1;
 		} else {
-			$increment = -1;
+			$increment = $curr_active_menu_items ? -1 : 0;
 		}
 		$new_active_menu_items += $increment;
+		$input['item']['active'] = (($curr_active_menu_items < $max_menu_items) && isset_or($input['item']['active'], true)) || (($curr_active_menu_items >= $max_menu_items) && isset_or($input['item']['active'], true) && $wasActive);
 		try {
 			DB::transaction(function () use ($id, $input, &$menu_item) {
 				$validPropertyClientsNew = $input['item']['property_type'] == 'Franchise' ? Franchise::getOwnerClientIds($input['item']['property_id']) : Restaurant::getOwnerClientIds($input['item']['property_id']);
@@ -196,7 +197,7 @@ class ManageController extends Controller {
 			return $this->response->error($e->getMessage(), 404);
 		}
 		$old_active_menu_items = MenuItem::getNumActive($oldPropertyId, $oldPropertyType);
-		return $this->response->array(array('success' => true, 'menu_item_id' => $menu_item->id, 'old_property_id' => $oldPropertyId, 'old_property_type' => $oldPropertyType, 'new_property_id' => $input['item']['property_id'], 'new_property_type' => $input['item']['property_type'], 'inactive' => !$input['item']['active'], 'old_active' => $old_active_menu_items, 'new_active' => $new_active_menu_items, 'exceeded' => ($curr_active_menu_items >= $max_menu_items && $curr_active_menu_items == $new_active_menu_items)));
+		return $this->response->array(array('success' => true, 'menu_item_id' => $menu_item->id, 'old_property_id' => $oldPropertyId, 'old_property_type' => $oldPropertyType, 'new_property_id' => $input['item']['property_id'], 'new_property_type' => $input['item']['property_type'], 'inactive' => !$input['item']['active'], 'old_active' => $old_active_menu_items, 'new_active' => $new_active_menu_items, 'exceeded' => ($new_active_menu_items > $max_menu_items)));
 	}
 
 	public function getMenuItem(Request $request) {

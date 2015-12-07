@@ -7,21 +7,21 @@
 
 			<div class="panel panel-default" ng-controller="RestaurantFranchiseManageController">
                 <div ng-show="landing">
-    				<div class="panel-heading">My Properties</div>
+    				<div class="panel-heading">@{{franchise_name}} Properties</div>
 
     				<div class="panel-body">
     					<div role="tabpanel">
 
                           <!-- Nav tabs -->
                           <ul class="nav nav-tabs" role="tablist">
-                            <li role="presentation" class="active"><a href="#restaurants" aria-controls="restaurants" role="tab" data-toggle="tab">Restaurants</a></li>
-                            <li role="presentation"><a href="#franchises" aria-controls="franchises" role="tab" data-toggle="tab">Franchises</a></li>
+                            <li role="presentation" ng-class="{active: showRestaurantsTab()}"><a href="#restaurants" aria-controls="restaurants" role="tab" data-toggle="tab">Restaurants</a></li>
+                            <li role="presentation" ng-class="{active: !showRestaurantsTab()}"><a href="#franchises" ng-click="toggleFranchisesShow()" aria-controls="franchises" role="tab" data-toggle="tab">Franchises</a></li>
                           </ul>
 
                           <div class="tab-content">
-                            <div ng-if="lookupComplete" role="tabpanel" class="tab-pane active" id="restaurants" ng-cloak>
+                            <div ng-if="lookupComplete" ng-class="{active: showRestaurantsTab()}" role="tabpanel" class="tab-pane" id="restaurants" ng-cloak>
                                 <div class="panel-body" ng-show="restaurants.length == 0">There are no restaurants assigned to your account.</div>
-                                <table ng-show="restaurants.length > 0" class="table table-striped table-hover table-bordered dashboard-table">
+                                <table ng-show="restaurants.length > 0 && lookupComplete" class="table table-striped table-hover table-bordered dashboard-table">
                                     <tr>
                                         <th class="col-md-6">Restaurant Details</th>
                                         <th class="col-md-2">Total Menu Items</th>
@@ -44,7 +44,7 @@
                                 </div>
                             </div><!--tab panel profile-->
 
-                            <div ng-show="lookupComplete" role="tabpanel" class="tab-pane" id="franchises" ng-cloak>
+                            <div ng-show="lookupComplete" ng-class="{active: !showRestaurantsTab()}" role="tabpanel" class="tab-pane" id="franchises" ng-cloak>
                                 <div class="panel-body" ng-show="franchises.length == 0">There are no franchises assigned to your account.</div>
                                 <table ng-show="franchises.length > 0" class="table table-striped table-hover table-bordered dashboard-table">
                                     <tr>
@@ -55,8 +55,8 @@
                                         <th class="col-md-2">Maximum Number of<br />Advertised Menu Items</th>
                                     </tr>
                                     <tr ng-repeat="franchise in franchises">
-                                        <td>@{{franchise.franchise_name}}</td>
-                                        <td><a href="/restaurant/manage/franchise?id=@{{franchise.franchise_id}}">@{{franchise.restaurants.length}}</td>
+                                        <td><a href="javascript:void(0);" ng-click="showFranchiseRestaurants(franchise.franchise_id, franchise.franchise_name)">@{{franchise.franchise_name}}</a></td>
+                                        <td><a href="javascript:void(0);" ng-click="showFranchiseRestaurants(franchise.franchise_id, franchise.franchise_name)">@{{franchise.restaurants.length}}</td>
                                         <td><a href="javascript:void(0);" ng-click="showMenuItems('Franchise', franchise.franchise_id, franchise.franchise_name, franchise.max_menu_items)"><span ng-show="!menu_item_count['Franchise'][franchise.franchise_id]['total']">0</span><span ng-show="menu_item_count['Franchise'][franchise.franchise_id]['total']">@{{menu_item_count['Franchise'][franchise.franchise_id]['total']}}</span></a></td>
                                         <td><a href="javascript:void(0);" ng-click="showMenuItems('Franchise', franchise.franchise_id, franchise.franchise_name, franchise.max_menu_items)"><span ng-show="!menu_item_count['Franchise'][franchise.franchise_id]['active']">0</span><span ng-show="menu_item_count['Franchise'][franchise.franchise_id]['active']">@{{menu_item_count['Franchise'][franchise.franchise_id]['active']}}</span></a></td>
                                         <td><a href="/restaurant/manage/adslots?franchise_id=@{{franchise.franchise_id}}">@{{franchise.max_menu_items}}</a></td>

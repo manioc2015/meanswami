@@ -22,3 +22,8 @@ hr.schedule {
 .pagination {
 	margin: 5px 0px !important;
 }
+
+.hidden {
+	display: none;
+	visibility: hidden;
+}

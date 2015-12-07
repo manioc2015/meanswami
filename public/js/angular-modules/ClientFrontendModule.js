@@ -73,11 +73,12 @@ var app = angular.module("ClientFrontendModule", ["ngResource", "ui.bootstrap", 
       }
     );
 
-    resource.prototype.getStats = function () {
+    resource.prototype.getStats = function (franchise_id) {
       return resource.get(
         {
           type: 'manage',
-          operation: 'stats'
+          operation: 'stats',
+          franchise_id: franchise_id
         }).$promise;
     };
 
@@ -762,20 +763,26 @@ return resource;
     $scope.totalItems = 0;
     $scope.itemsPerPage = 25;
     $scope.menu_items = {};
+    $scope.franchise_name = 'My';
+    $scope.franchise_id = null;
+    $scope.showFranchises = false;
 
     $scope.numberOfPages=function(){
         return Math.ceil($scope.restaurants.length/$scope.pageSize);                
     }
     $scope.lookupComplete = false;
-    $scope.list = function () {
+    $scope.list = function (franchise_id) {
+      $scope.lookupComplete = false;
       var resource = new RestaurantFranchiseManageResource();
       var promise = null;
-      promise = resource.getStats();
+      promise = resource.getStats(franchise_id);
       promise.then(function(data) {
         if (data['success']) {
           $scope.restaurants = data['restaurants'];
           $scope.totalItems = data['restaurants'].length;
-          $scope.franchises = data['franchises'];
+          if (!franchise_id) {
+	          $scope.franchises = data['franchises'];
+	      }
           $scope.menu_item_count = data['menu_items'];
           MenuItemCountService.mass_set_counts($scope.menu_item_count);
           $scope.lookupComplete = true;
@@ -789,6 +796,22 @@ return resource;
     $scope.showMenuItems = function (property_type, property_id, restaurant_name, max_menu_items) {
         $scope.$broadcast("loadMenuItemsModal", {property_type: property_type, property_id: property_id, restaurant_name: restaurant_name, max_menu_items: max_menu_items});
     };
+
+    $scope.showFranchiseRestaurants = function(franchise_id, franchise_name) {
+    	$scope.showFranchises = false;
+    	$scope.list(franchise_id);
+    	$scope.franchise_id = franchise_id;
+    	$scope.franchise_name = franchise_name + "'s";
+    	$scope.franchise_name = $scope.franchise_name.replace("'s's", "'s");
+    }
+
+    $scope.showRestaurantsTab = function() {
+    	return !$scope.showFranchises;
+    }
+
+    $scope.toggleFranchisesShow = function() {
+    	$scope.showFranchises = true;
+    }
 
     $scope.list();
 }]).controller("MenuItemsInitCtrl", ['$scope', '$resource', 'RestaurantFranchiseManageResource', '$uibModal', function($scope, $resource, RestaurantFranchiseManageResource, $uibModal)
