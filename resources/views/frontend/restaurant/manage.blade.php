@@ -7,7 +7,7 @@
 
 			<div class="panel panel-default" ng-controller="RestaurantFranchiseManageController">
                 <div ng-show="landing">
-    				<div class="panel-heading">@{{franchise_name}} Properties</div>
+    				<div class="panel-heading"><span ng-cloak>@{{franchise_name}}</span> Properties</div>
 
     				<div class="panel-body">
     					<div role="tabpanel">

@@ -56,7 +56,7 @@ class Client extends BaseModel {
 			$sql .= " AND r.franchise_id = ? ";
 			$params = array($id, $franchise_id);
 		}
-		$sql .= "ORDER BY franchise_name ASC NULLS LAST, restaurant_franchise_id, name, zipcode";
+		$sql .= "ORDER BY franchise_name ASC NULLS LAST, restaurant_franchise_id, name, address1, address2, zipcode";
 		$properties = DB::select($sql, $params);
 		$ret = array();
 		$indexMap = array();
