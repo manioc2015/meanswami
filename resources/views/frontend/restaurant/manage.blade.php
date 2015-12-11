@@ -85,7 +85,8 @@
                                 <tr ng-repeat="(index, menu_item) in menu_items | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
                                     <td class="col-md-5"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, false)">@{{menu_item.name}}</td>
                                     <td class="col-md-5"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, true)">
-                                        <span ng-repeat="course in menu_item.availability['courses']"><span ng-show="$last && menu_item.availability['courses'].length>1">and </span>@{{courses_map[course]}}<span ng-show="!$last">, </span></span><span ng-show="$last && menu_item.availability['courses'].length>1"><br /></span>
+                                        <span ng-repeat="course in menu_item.availability['courses']"><span ng-show="$last && menu_item.availability['courses'].length>1">and </span>@{{courses_map[course]}}<span ng-show="!$last">, </span><span ng-show="$last && menu_item.availability['courses'].length>0"><br /></span></span>
+                                        <span ng-show="menu_item.availability.start_date">Starts: @{{menu_item.availability.start_date}}</span>&nbsp;<span ng-show="menu_item.availability.end_date">Ends: @{{menu_item.availability.end_date}}</span><span ng-show="menu_item.availability.start_date || menu_item.availability.end_date"><br /></span>
                                         <span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7" ng-repeat="day in menu_item.availability['days']"><span ng-show="$last && menu_item.availability['days'].length>1">and </span>@{{days_map[day]}}<span ng-show="!$last">,</span> </span><span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7">Only</span>
                                         </a>
                                     </td>

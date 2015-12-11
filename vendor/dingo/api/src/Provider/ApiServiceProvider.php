@@ -54,6 +54,7 @@ abstract class ApiServiceProvider extends ServiceProvider
         $this->registerMiddleware();
         $this->registerTransformer();
         $this->registerDocsCommand();
+
         $this->commands([
             'Dingo\Api\Console\Command\Docs',
         ]);

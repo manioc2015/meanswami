@@ -11,6 +11,13 @@
 				<div class="panel-body">
 
                        {!! Form::model($user, ['route' => 'frontend.profile.update', 'class' => 'form-horizontal', 'method' => 'PATCH']) !!}
+                              <div class="form-group">
+                                    {!! Form::label('name', trans('validation.attributes.name'), ['class' => 'col-md-4 control-label']) !!}
+                                    <div class="col-md-6">
+                                        {!! Form::input('text', 'name', null, ['class' => 'form-control']) !!}
+                                    </div>
+                              </div>
+
                               @if ($user->canChangeEmail())
                                   <div class="form-group">
                                       {!! Form::label('email', trans('validation.attributes.email'), ['class' => 'col-md-4 control-label']) !!}
@@ -19,13 +26,6 @@
                                       </div>
                                   </div>
                               @endif
-
-                              <div class="form-group">
-                                    {!! Form::label('name', trans('validation.attributes.name'), ['class' => 'col-md-4 control-label']) !!}
-                                    <div class="col-md-6">
-                                        {!! Form::input('text', 'name', null, ['class' => 'form-control']) !!}
-                                    </div>
-                              </div>
 
                               <div class="form-group">
                                     {!! Form::label('username', trans('validation.attributes.username'), ['class' => 'col-md-4 control-label']) !!}

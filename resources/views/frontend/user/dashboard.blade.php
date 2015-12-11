@@ -25,6 +25,10 @@
                                     <td>{!! $user->name !!}</td>
                                 </tr>
                                 <tr>
+                                    <th>{{ trans('validation.attributes.username') }}</th>
+                                    <td>{!! $user->username !!}</td>
+                                </tr>
+                                <tr>
                                     <th>{{ trans('validation.attributes.email') }}</th>
                                     <td>{!! $user->email !!}</td>
                                 </tr>

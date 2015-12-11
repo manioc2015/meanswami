@@ -28,7 +28,7 @@ class RegisterRequest extends Request {
 		return [
 			'name' 		=> 'required|max:64',
 			'email' 	=> 'required|email|max:64|unique:users',
-			'username'	=> 'required|max:16|min:4|unique:users',
+			'username'	=> 'required|alpha_dash|max:16|min:4|unique:users',
 			'password'  => 'required|confirmed|min:6',
 			'g-recaptcha-response' => 'required|captcha'
 		];

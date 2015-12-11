@@ -252,7 +252,9 @@ class Route
         if (str_contains($this->action['uses'], '@')) {
             list($controller, $this->method) = explode('@', $this->action['uses']);
 
-            return $this->controller = $this->container->make($controller);
+            $this->container->instance($controller, $this->controller = $this->container->make($controller));
+
+            return $this->controller;
         }
     }
 
@@ -350,6 +352,17 @@ class Route
         }
 
         return $this->scopes;
+    }
+
+    /**
+     * Check if route requires all scopes
+     * or any scope to be valid.
+     *
+     * @return bool
+     */
+    public function scopeStrict()
+    {
+        return array_get($this->action, 'scopeStrict', false);
     }
 
     /**

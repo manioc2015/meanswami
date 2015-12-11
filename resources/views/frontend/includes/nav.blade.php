@@ -98,22 +98,42 @@
 		        	<b>Select Availability Days and Meal Courses</b><br /><br />
 		        	<span style="color: red;" ng-show="day_error">You must select at least one day.<br /></span>
 		        	<span style="color: red;" ng-show="course_error">You must select at least one meal course.<br /></span>
-			        <div style="display: inline-table; width: 33%">
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('1')" ng-click="selectDay($event, '1')" ng-value="1" />Mon</div>
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('2')" ng-click="selectDay($event, '2')" ng-value="2" />Tue</div>
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('3')" ng-click="selectDay($event, '3')" ng-value="3" />Wed</div>
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('4')" ng-click="selectDay($event, '4')" ng-value="4" />Thu</div>
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('5')" ng-click="selectDay($event, '5')" ng-value="5" />Fri</div>
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('6')" ng-click="selectDay($event, '6')" ng-value="6" />Sat</div>
-			        	<div style="display: block;"><input name="day" type="checkbox" ng-checked="daySelected('7')" ng-click="selectDay($event, '7')" ng-value="7" />Sun</div>
+			        <div style="display: inline-table; width: 100%">
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('1')" ng-click="selectDay($event, '1')" ng-value="1" />Mon</div>
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('2')" ng-click="selectDay($event, '2')" ng-value="2" />Tue</div>
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('3')" ng-click="selectDay($event, '3')" ng-value="3" />Wed</div>
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('4')" ng-click="selectDay($event, '4')" ng-value="4" />Thu</div>
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('5')" ng-click="selectDay($event, '5')" ng-value="5" />Fri</div>
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('6')" ng-click="selectDay($event, '6')" ng-value="6" />Sat</div>
+			        	<div class="col-md-1" style="display: inline;"><input name="day" type="checkbox" ng-checked="daySelected('7')" ng-click="selectDay($event, '7')" ng-value="7" />Sun</div>
 			        </div>
-			        <div style="display: inline-table; width: 33%">
-			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('1')" ng-click="selectCourse($event, '1')" ng-value="1">Breakfast</div>
-			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('2')" ng-click="selectCourse($event, '2')" ng-value="2">Brunch</div>
-			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('3')" ng-click="selectCourse($event, '3')" ng-value="3">Lunch</div>
-			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('4')" ng-click="selectCourse($event, '4')" ng-value="4">Tea</div>
-			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('5')" ng-click="selectCourse($event, '5')" ng-value="5">Dinner</div>
-			        	<div style="display: block;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('6')" ng-click="selectCourse($event, '6')" ng-value="6">Late-Night</div>
+			        <div style="display: inline-table; width: 100%">
+			        	<div class="col-md-2" style="display: inline;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('1')" ng-click="selectCourse($event, '1')" ng-value="1">Breakfast</div>
+			        	<div class="col-md-2" style="display: inline;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('2')" ng-click="selectCourse($event, '2')" ng-value="2">Brunch</div>
+			        	<div class="col-md-2" style="display: inline;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('3')" ng-click="selectCourse($event, '3')" ng-value="3">Lunch</div>
+			        	<div class="col-md-2" style="display: inline;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('4')" ng-click="selectCourse($event, '4')" ng-value="4">Tea</div>
+			        	<div class="col-md-2" style="display: inline;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('5')" ng-click="selectCourse($event, '5')" ng-value="5">Dinner</div>
+			        	<div class="col-md-2" style="display: inline;"><input type="checkbox" name="mealtime" ng-checked="courseSelected('6')" ng-click="selectCourse($event, '6')" ng-value="6">Late-Night</div>
+			        </div>
+			        <div style="display: block; width: 100%">
+			        	<div class="col-md-6" style="display: inline-block;">
+			        	<b>Start Date</b><br />
+			            <p class="input-group">
+			              <input type="text" class="form-control" uib-datepicker-popup="@{{format}}" is-open="status.start_date.opened" ng-model="start_date_obj" datepicker-options="dateOptions" close-text="Close" />
+			              <span class="input-group-btn">
+			                <button type="button" class="btn btn-default" ng-click="open($event, 'start_date')"><i class="glyphicon glyphicon-calendar"></i></button>
+			              </span>
+			            </p>
+			            </div>
+			        	<div class="col-md-6" style="display: inline-block;">
+			        	<b>End Date (optional)</b><br />
+			            <p class="input-group">
+			              <input type="text" class="form-control" uib-datepicker-popup="@{{format}}" is-open="status.end_date.opened" ng-model="end_date_obj" datepicker-options="dateOptions" close-text="Close" />
+			              <span class="input-group-btn">
+			                <button type="button" class="btn btn-default" ng-click="open($event, 'end_date')"><i class="glyphicon glyphicon-calendar"></i></button>
+			              </span>
+			            </p>
+			            </div>
 			        </div>
 			    </div>
 		        <div class="modal-footer">

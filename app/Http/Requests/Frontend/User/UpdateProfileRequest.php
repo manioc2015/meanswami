@@ -29,7 +29,7 @@ class UpdateProfileRequest extends Request {
 		return [
 			'name'	=> 'required|max:64',
 			'email' 	=> "required|email|max:64|unique:users,email,$userId",
-			'username'	=> "required|max:16|min:4|unique:users,username,$userId"
+			'username'	=> "required|alpha_dash|max:16|min:4|unique:users,username,$userId"
 		];
 	}
 }

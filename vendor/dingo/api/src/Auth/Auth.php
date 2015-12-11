@@ -73,6 +73,7 @@ class Auth
     public function authenticate(array $providers = [])
     {
         $exceptionStack = [];
+
         // Spin through each of the registered authentication providers and attempt to
         // authenticate through one of them. This allows a developer to implement
         // and allow a number of different authentication mechanisms.

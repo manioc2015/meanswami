@@ -85,12 +85,13 @@ class Request
                 });
 
                 $request = $this->app->make('Dingo\Api\Contract\Http\Request')->createFromIlluminate($request);
+
                 return $this->sendRequestThroughRouter($request);
             }
         } catch (Exception $exception) {
-            die;
             return $this->exception->handle($exception);
         }
+
         return $next($request);
     }
 

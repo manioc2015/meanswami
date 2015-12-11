@@ -374,7 +374,7 @@ return resource;
       	allergens: [11,12,13,14,15,16,17,18,19,20,21,22,24,25,26], 
       	organic: 1, 
       	spicy: 303,
-      	availability: {'days': [1,2,3,4,5,6,7], 'courses': [3,4,5]}
+      	availability: {'days': [1,2,3,4,5,6,7], 'courses': [3,4,5], 'start_date': null, 'end_date': null}
       };    	
 	  if (id) {
 	  	$scope.lookupMenuItem(id, schedule);
@@ -483,13 +483,12 @@ return resource;
 		{id: 112, value: 'Vegeterian'}
   	  ];
 
-  	  $scope.spicy = [{id: 302, value: 'Yes'}, {id: 303, value: 'No'}, {id: 304, value: 'Optional'}];
+  	$scope.spicy = [{id: 302, value: 'Yes'}, {id: 303, value: 'No'}, {id: 304, value: 'Optional'}];
 
-  	  $scope.id = data.id;
+  	$scope.id = data.id;
 	  $scope.menu_item = data;
 	  $scope.step = 1;
 	  $scope.menuItemAdded = false;
-
 	  $scope.restaurants = {};
 
 	  $scope.day_error = false;
@@ -501,22 +500,67 @@ return resource;
 	  	$scope.doSchedule = true;
 	  }
 
-	    var resource = new RestaurantDataResource();
+    $scope.start_date_obj = null;
+    $scope.end_date_obj = null;
+    $scope.start_date = null;
+    $scope.end_date = null;
+    $scope.status = {start_date: {opened: false}, end_date: {opened: false}};
+
+    $scope.today = function() {
+      $scope.start_date_obj = new Date();
+    }
+    $scope.today();
+
+    $scope.clear = function () {
+      $scope.start_date_obj = null;
+      $scope.end_date_obj = null;
+    };
+
+    $scope.open = function($event, which) {
+      $scope.status[which].opened = true;
+    };
+
+    $scope.set_date_obj = function() {
+      var ymd;
+      if ($scope.menu_item.availability.start_date) {
+        ymd = $scope.menu_item.availability.start_date.split('-');
+        $scope.start_date_obj = new Date(ymd[0], ymd[1] - 1, ymd[2]);
+      }
+      if ($scope.menu_item.availability.end_date) {
+        ymd = $scope.menu_item.availability.end_date.split('-');
+        $scope.end_date_obj = new Date(ymd[0], ymd[1] - 1, ymd[2]);
+      }
+    }
+
+    $scope.set_date_string = function() {
+      if ($scope.start_date_obj) {
+        $scope.menu_item.availability.start_date = $scope.start_date_obj.toISOString().substring(0, 10);
+      }
+      if ($scope.end_date_obj) {
+        $scope.menu_item.availability.end_date = $scope.end_date_obj.toISOString().substring(0, 10);
+      }
+    }
+
+    $scope.set_date_obj();
+
+    $scope.format = 'yyyy-MM-dd';
+
+	  var resource = new RestaurantDataResource();
 		var promise = null;
 		promise = resource.lookupProperties();
 		promise.then(function(data) {
 			if (data['success']) {
 				data = data['data'];
 			}
-		    if (!$scope.menu_item.id) {
-		    	if (data['data'] && !data[0]) {
-			        $scope.menu_item.franchise_id = 0;
-			        $scope.menu_item.restaurant_id = data['data'].restaurants[0].id;
-		        } else {
-			        $scope.menu_item.franchise_id = data[0].franchise_id;
-			        $scope.menu_item.restaurant_id = data[0]['restaurants'][0]['id'];
-		        }
-		    }
+	    if (!$scope.menu_item.id) {
+	    	if (data['data'] && !data[0]) {
+		        $scope.menu_item.franchise_id = 0;
+		        $scope.menu_item.restaurant_id = data['data'].restaurants[0].id;
+	        } else {
+		        $scope.menu_item.franchise_id = data[0].franchise_id;
+		        $scope.menu_item.restaurant_id = data[0]['restaurants'][0]['id'];
+	        }
+	    }
 			$scope.restaurants = data;
 		},
 		function(response, status) {
@@ -741,6 +785,7 @@ return resource;
 	  	} else {
 	  		$scope.course_error = false;
 	  	}
+      $scope.set_date_string();
 	    var resource = new RestaurantDataResource();
 	    var promise = null;
   		promise = resource.scheduleMenuItem($scope.menu_item.id, $scope.menu_item.availability);
