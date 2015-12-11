@@ -108,6 +108,7 @@ return [
         'email' => 'Email',
         'password' => 'Password',
         'name' => 'Name',
+        'username' => 'Username',
         'created_at' => 'Date Created',
         'old_password' => 'Current Password',
         'new_password' => 'New Password',

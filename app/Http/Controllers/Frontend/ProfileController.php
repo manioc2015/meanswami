@@ -3,7 +3,7 @@
 use App\Http\Controllers\Controller;
 use App\Repositories\Frontend\User\UserContract;
 use App\Http\Requests\Frontend\User\UpdateProfileRequest;
-
+use Session;
 /**
  * Class ProfileController
  * @package App\Http\Controllers\Frontend
@@ -25,6 +25,12 @@ class ProfileController extends Controller {
 	 */
 	public function update(UserContract $user, UpdateProfileRequest $request) {
 		$user->updateProfile($request->all());
-		return redirect()->route('frontend.dashboard')->withFlashSuccess(trans("strings.profile_successfully_updated"));
+		$userId = auth()->user()->id;
+        $client = \App\Models\Client\Client::where('user_id', $userId)->first();
+		$url = $client ? '/dashboard' : '/';
+		if (Session::pull('redirectToSave', false)) {
+    	    $url =  '/restaurant/signup/save';
+    	}
+		return redirect($url)->withFlashSuccess(trans("strings.profile_successfully_updated"));
 	}
 }

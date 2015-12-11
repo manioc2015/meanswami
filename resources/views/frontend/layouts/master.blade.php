@@ -36,17 +36,13 @@
         <!--[if lt IE 8]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        @permissions(['view_restaurants', 'create_menu_items'])
         <div ng-module="ClientFrontendModule">
-        @endauth
             @include('frontend.includes.nav')
             <div class="container-fluid">
                 @include('includes.partials.messages')
                 @yield('content')
             </div><!-- container -->
-        @permissions(['view_restaurants', 'create_menu_items'])
         </div>
-        @endauth
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="{{asset('js/vendor/jquery-1.11.2.min.js')}}"><\/script>')</script>
         {!! HTML::script('js/vendor/bootstrap.min.js') !!}

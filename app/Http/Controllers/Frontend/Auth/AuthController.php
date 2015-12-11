@@ -44,16 +44,8 @@ class AuthController extends Controller
         return view('frontend.auth.register');
     }
 
-    public function postRegister(Request $request)
+    public function postRegister(RegisterRequest $request)
     {
-        $validator = $this->registrar->validator($request->all());
-
-        if ($validator->fails()) {
-            $this->throwValidationException(
-                $request, $validator
-            );
-        }
-
         \Auth::login($this->registrar->create($request->all()));
         $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : '/';
         return redirect($url);
@@ -285,6 +277,9 @@ class AuthController extends Controller
 
         // Log the user into Laravel
         \Auth::login($user);
+        if (isset($user->is_new) || !$user->email || !$user->name || !$user->username) {
+            return redirect('/profile/edit')->withFlashSuccess('message', 'Please complete your profile.');
+        }
         $client = \App\Models\Client\Client::where('user_id', $user->id)->first();
         $url = \Session::pull('redirectToSave', false) ? '/restaurant/signup/save' : ($client ? '/dashboard' : '/');
         return redirect($url)->withFlashSuccess('message', 'Successfully logged in with Facebook');

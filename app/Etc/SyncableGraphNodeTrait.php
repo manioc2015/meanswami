@@ -57,8 +57,9 @@ trait SyncableGraphNodeTrait
         $graph_node = static::firstOrNewGraphNode($attribute_fbid, $attribute_email);
 
         static::mapGraphNodeFieldNamesToDatabaseColumnNames($graph_node, $data);
-
+        $is_new = $graph_node->id ? false : true;
         $graph_node->save();
+        $graph_node->is_new = $is_new;
 
         return $graph_node;
     }

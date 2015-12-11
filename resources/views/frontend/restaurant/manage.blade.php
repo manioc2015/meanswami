@@ -26,7 +26,7 @@
                                         <th class="col-md-6">Restaurant Details</th>
                                         <th class="col-md-2">Total Menu Items</th>
                                         <th class="col-md-2">Advertised Menu Items</th>
-                                        <th class="col-md-2">Maximum Number of<br />Advertised Menu Items</th>
+                                        <th class="col-md-2"># of Advertised<br />Menu Items Allowed</th>
                                     </tr>
                                     <tr ng-repeat="restaurant in restaurants | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
                                         <td>@{{restaurant.name}}<br />@{{restaurant.address1}} @{{restaurant.address2}}<br />

@@ -45,6 +45,7 @@ class EloquentUserRepository implements UserContract {
 		$user = User::create([
 			'name' => $data['name'],
 			'email' => $data['email'],
+			'username' => $data['username'],
 			'password' => $provider ? null : $data['password'],
 			'confirmation_code' => md5(uniqid(mt_rand(), true)),
 			'confirmed' => config('access.users.confirm_email') ? 0 : 1,
@@ -141,6 +142,7 @@ class EloquentUserRepository implements UserContract {
 	public function updateProfile($input) {
 		$user = access()->user();
 		$user->name = $input['name'];
+		$user->username = $input['username'];
 
 		if ($user->canChangeEmail()) {
 			//Address is not current address
@@ -152,6 +154,15 @@ class EloquentUserRepository implements UserContract {
 
 				$user->email = $input['email'];
 			}
+		}
+
+		if ($user->username != $input['username'])
+		{
+			//Emails have to be unique
+			if (User::where('username', $input['username'])->first())
+				throw new GeneralException("That username address is already taken.");
+
+			$user->username = $input['username'];
 		}
 
 		return $user->save();
