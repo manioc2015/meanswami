@@ -94,6 +94,7 @@ class SignupController extends Controller {
 						$data[$i]['country'] = $listing['location']['country_code'];
 						$data[$i]['lat'] = $listing['location']['coordinate']['latitude'];
 						$data[$i]['lon'] = $listing['location']['coordinate']['longitude'];
+						$data[$i]['delivers'] = true;
 						$i++;
 					}
 				}
@@ -122,6 +123,7 @@ class SignupController extends Controller {
 						$data[$i]['country'] = $listing->country;
 						$data[$i]['lat'] = $listing->lat;
 						$data[$i]['lon'] = $listing->lon;
+						$data[$i]['delivers'] = true;
 						$i++;
 					}
 					return $this->response->array(array('success' => true, 'data' => $data));

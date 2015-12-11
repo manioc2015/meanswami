@@ -259,6 +259,7 @@ return resource;
         this.restaurant.phone = this.restaurants[index].phone;
         this.restaurant.lat = this.restaurants[index].lat;
         this.restaurant.lon = this.restaurants[index].lon;
+        this.restaurant.delivers = this.restaurants[index].delivers;
         this.restaurant.website = '';
         this.restaurant.description = '';
         $scope.showRestaurantFormStatus = true;

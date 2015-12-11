@@ -113,6 +113,15 @@
                             </tr>
                             <tr>
                                 <td class="col-md-4">
+                                    {!! Form::label('delivers', 'Do you deliver?', ['class' => 'col-md-12 control-label']) !!}
+                                </td>
+                                <td class="col-md-8">
+                                    <input type="radio" name="delivers" ng-model="restaurant.delivers" ng-value="true" ng-checked="restaurant.delivers">Yes&nbsp;&nbsp;
+                                    <input type="radio" name="delivers" ng-model="restaurant.delivers" ng-value="false" ng-checked="!restaurant.delivers">No
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="col-md-4">
                                     {!! Form::label('website', 'Website', ['class' => 'col-md-12 control-label']) !!}
                                 </td>
                                 <td class="col-md-8">

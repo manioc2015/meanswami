@@ -33,8 +33,13 @@
                                             @{{restaurant.city}}, @{{restaurant.state}} @{{restaurant.zipcode}} @{{restaurant.country}}<br />
                                             @{{restaurant.phone}}
                                         </td>
-                                        <td><a href="javascript:void(0);" ng-click="showMenuItems('Restaurant', restaurant.id, restaurant.name, restaurant.max_menu_items)"><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['total']">0</span><span ng-show="menu_item_count['Restaurant'][restaurant.id]['total']">@{{menu_item_count['Restaurant'][restaurant.id]['total']}}</span></a></td>
-                                        <td><a href="javascript:void(0);" ng-click="showMenuItems('Restaurant', restaurant.id, restaurant.name, restaurant.max_menu_items)"><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['active']">0</span><span ng-show="menu_item_count['Restaurant'][restaurant.id]['active']">@{{menu_item_count['Restaurant'][restaurant.id]['active']}}</span></a></td>
+                                        @permission('view_menu_items')
+                                        <td><a ng-show="menu_item_count['Restaurant'][restaurant.id]['total']" href="javascript:void(0);" ng-click="showMenuItems('Restaurant', restaurant.id, restaurant.name, restaurant.max_menu_items)"><span ng-show="menu_item_count['Restaurant'][restaurant.id]['total']">@{{menu_item_count['Restaurant'][restaurant.id]['total']}}</span></a><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['total']">0</span></td>
+                                        <td><a ng-show="menu_item_count['Restaurant'][restaurant.id]['total']" href="javascript:void(0);" ng-click="showMenuItems('Restaurant', restaurant.id, restaurant.name, restaurant.max_menu_items)"><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['active']">0</span><span ng-show="menu_item_count['Restaurant'][restaurant.id]['active']">@{{menu_item_count['Restaurant'][restaurant.id]['active']}}</span></a><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['active'] && !menu_item_count['Restaurant'][restaurant.id]['total']">0</span></td>
+                                        @else
+                                        <td><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['total']">0</span><span ng-show="menu_item_count['Restaurant'][restaurant.id]['total']">@{{menu_item_count['Restaurant'][restaurant.id]['total']}}</span></td>
+                                        <td><span ng-show="!menu_item_count['Restaurant'][restaurant.id]['active']">0</span><span ng-show="menu_item_count['Restaurant'][restaurant.id]['active']">@{{menu_item_count['Restaurant'][restaurant.id]['active']}}</span></td>
+                                        @endauth
                                         <td><a href="/restaurant/manage/adslots?restaurant_id=@{{restaurant.id}}">@{{restaurant.max_menu_items}}</a></td>
                                     </tr>
                                 </table>
@@ -57,8 +62,13 @@
                                     <tr ng-repeat="franchise in franchises">
                                         <td><a href="javascript:void(0);" ng-click="showFranchiseRestaurants(franchise.franchise_id, franchise.franchise_name)">@{{franchise.franchise_name}}</a></td>
                                         <td><a href="javascript:void(0);" ng-click="showFranchiseRestaurants(franchise.franchise_id, franchise.franchise_name)">@{{franchise.restaurants.length}}</td>
+                                        @permission('view_menu_items')
                                         <td><a href="javascript:void(0);" ng-click="showMenuItems('Franchise', franchise.franchise_id, franchise.franchise_name, franchise.max_menu_items)"><span ng-show="!menu_item_count['Franchise'][franchise.franchise_id]['total']">0</span><span ng-show="menu_item_count['Franchise'][franchise.franchise_id]['total']">@{{menu_item_count['Franchise'][franchise.franchise_id]['total']}}</span></a></td>
                                         <td><a href="javascript:void(0);" ng-click="showMenuItems('Franchise', franchise.franchise_id, franchise.franchise_name, franchise.max_menu_items)"><span ng-show="!menu_item_count['Franchise'][franchise.franchise_id]['active']">0</span><span ng-show="menu_item_count['Franchise'][franchise.franchise_id]['active']">@{{menu_item_count['Franchise'][franchise.franchise_id]['active']}}</span></a></td>
+                                        @else
+                                        <td><span ng-show="!menu_item_count['Franchise'][franchise.franchise_id]['total']">0</span><span ng-show="menu_item_count['Franchise'][franchise.franchise_id]['total']">@{{menu_item_count['Franchise'][franchise.franchise_id]['total']}}</span></td>
+                                        <td><span ng-show="!menu_item_count['Franchise'][franchise.franchise_id]['active']">0</span><span ng-show="menu_item_count['Franchise'][franchise.franchise_id]['active']">@{{menu_item_count['Franchise'][franchise.franchise_id]['active']}}</span></td>
+                                        @endauth
                                         <td><a href="/restaurant/manage/adslots?franchise_id=@{{franchise.franchise_id}}">@{{franchise.max_menu_items}}</a></td>
                                     </tr>
                                 </table>
@@ -83,16 +93,32 @@
                                     <th class="col-md-2">Advertised (@{{num_active}} / @{{max_menu_items}})</th>
                                 </tr>
                                 <tr ng-repeat="(index, menu_item) in menu_items | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage">
-                                    <td class="col-md-5"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, false)">@{{menu_item.name}}</td>
+                                    @permission('manage_menu_items')
+                                    <td class="col-md-5"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, false)">@{{menu_item.name}}</a></td>
+                                    @else
+                                    <td class="col-md-5">@{{menu_item.name}}</td>
+                                    @endauth
+                                    @permission('schedule_menu_items')
                                     <td class="col-md-5"><a href="javascript:void(0);" ng-click="openMenuItem(menu_item.id, true)">
                                         <span ng-repeat="course in menu_item.availability['courses']"><span ng-show="$last && menu_item.availability['courses'].length>1">and </span>@{{courses_map[course]}}<span ng-show="!$last">, </span><span ng-show="$last && menu_item.availability['courses'].length>0"><br /></span></span>
                                         <span ng-show="menu_item.availability.start_date">Starts: @{{menu_item.availability.start_date}}</span>&nbsp;<span ng-show="menu_item.availability.end_date">Ends: @{{menu_item.availability.end_date}}</span><span ng-show="menu_item.availability.start_date || menu_item.availability.end_date"><br /></span>
                                         <span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7" ng-repeat="day in menu_item.availability['days']"><span ng-show="$last && menu_item.availability['days'].length>1">and </span>@{{days_map[day]}}<span ng-show="!$last">,</span> </span><span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7">Only</span>
                                         </a>
                                     </td>
-                                    <td class="col-md-2"><input type="radio" name="active_@{{index}}" ng-model="menu_item.active" ng-checked="menu_item.active" ng-click="updateActive(index, true, $event)" ng-value="true">Yes&nbsp;&nbsp;
+                                    <td class="col-md-2">
+                                        <input type="radio" name="active_@{{index}}" ng-model="menu_item.active" ng-checked="menu_item.active" ng-click="updateActive(index, true, $event)" ng-value="true">Yes&nbsp;&nbsp;
                                         <input type="radio" name="active_@{{index}}" ng-model="menu_item.active" ng-checked="!menu_item.active" ng-click="updateActive(index, false, $event)" ng-value="false">No
                                     </td>
+                                    @else
+                                    <td class="col-md-5">
+                                        <span ng-repeat="course in menu_item.availability['courses']"><span ng-show="$last && menu_item.availability['courses'].length>1">and </span>@{{courses_map[course]}}<span ng-show="!$last">, </span><span ng-show="$last && menu_item.availability['courses'].length>0"><br /></span></span>
+                                        <span ng-show="menu_item.availability.start_date">Starts: @{{menu_item.availability.start_date}}</span>&nbsp;<span ng-show="menu_item.availability.end_date">Ends: @{{menu_item.availability.end_date}}</span><span ng-show="menu_item.availability.start_date || menu_item.availability.end_date"><br /></span>
+                                        <span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7" ng-repeat="day in menu_item.availability['days']"><span ng-show="$last && menu_item.availability['days'].length>1">and </span>@{{days_map[day]}}<span ng-show="!$last">,</span> </span><span ng-show="menu_item.availability['days'].length > 0 && menu_item.availability['days'].length < 7">Only</span>
+                                    </td>
+                                    <td class="col-md-2">
+                                        <span ng-if="menu_item.active">Yes</span><span ng-if="!menu_item.active">No</span>
+                                    </td>
+                                    @endauth
                                 </tr>
                             </table>
                             <div style="width: 100%;" ng-show="menu_items.length > 0">

@@ -274,6 +274,7 @@ CREATE TABLE "restaurants" (
   "deleted_at" timestamp DEFAULT NULL,
   status varchar(31) NOT NULL DEFAULT 'PENDING_APPROVAL',
   is_claimed_on_yelp boolean,
+  delivers boolean not null default false
   PRIMARY KEY ("id")
 );
 

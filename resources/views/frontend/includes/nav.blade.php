@@ -1,5 +1,5 @@
 	<div>
-		@permission('create_menu_items')
+		@permissions(['manage_menu_items', 'schedule_menu_items'])
 		<div id="menuItemModal" ng-controller="MenuItemInitCtrl">
 		    <script type="text/ng-template" id="menuItemForm.html">
 		        <div class="modal-header">
@@ -175,12 +175,12 @@
 						</li>
 					</li>
 					@endauth
-				    @permission('view_menu_items')
+				    @permission('manage_menu_items')
 					<li>
 						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Menu Items <span class="caret"></span></a>
 							<ul class="dropdown-menu" role="menu">
-		    				    @permission('create_menu_items')
+		    				    @permission('manage_menu_items')
 							    <li ng-controller="MenuItemInitCtrl"><a href="javascript:void(0);" onclick="openModal('menuItemModal');">Create a Menu Item</a></li>
 							    @endauth
 							</ul>

@@ -21,7 +21,7 @@ class Restaurant extends BaseModel {
 	 *
 	 * @var array
 	 */
-	protected $fillable = ['franchise_id', 'sp_listing_id', 'yp_listing_id', 'yelp_listing_id', 'name', 'address1', 'address2', 'cross_streets', 'city', 'state', 'zipcode', 'country', 'lat', 'lon', 'phone', 'website', 'description', 'email', 'open_hours', 'payment_methods', 'timezone', 'is_claimed_on_yelp', 'status'];
+	protected $fillable = ['franchise_id', 'sp_listing_id', 'yp_listing_id', 'yelp_listing_id', 'name', 'address1', 'address2', 'cross_streets', 'city', 'state', 'zipcode', 'country', 'lat', 'lon', 'phone', 'website', 'description', 'email', 'open_hours', 'payment_methods', 'timezone', 'is_claimed_on_yelp', 'status', 'delivers'];
 
 	/**
 	 * The attributes that are not mass assignable.

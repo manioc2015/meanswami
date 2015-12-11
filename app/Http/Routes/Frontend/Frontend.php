@@ -26,23 +26,30 @@ $router->group(['namespace' => 'Restaurant'], function () use ($router) {
 	$router->controller('signup', 'SignupController');
 });
 
-$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:basic_client_permissions'], 'namespace' => 'Restaurant'], function () use ($router) {
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:view_restaurants'], 'namespace' => 'Restaurant'], function () use ($router) {
 	get('restaurant/manage', 'ManageController@getIndex')->name('restaurant.manage.index');
 	get('restaurant/manage/stats', 'ManageController@getStats')->name('restaurant.manage.stats');
 	get('restaurant/manage/franchise', 'ManageController@getFranchise')->name('restaurant.manage.franchise');
 	get('restaurant/manage/restaurant', 'ManageController@getRestaurant')->name('restaurant.manage.restaurant');
-	post('restaurant/save', 'ManageController@postRestaurant')->name('restaurant.save');
 	get('restaurant/menuitem/lookup', 'ManageController@getMenuItem')->name('restaurant.menuitem.lookup');
 	get('restaurant/menuitem/lookupByProperty', 'ManageController@getMenuItemsByProperty')->name('restaurant.menuitem.lookupByProperty');
 	get('restaurant/properties/lookup', 'ManageController@getClientProperties')->name('restaurant.properties.lookup');
 });
 
-$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:create_menu_items'], 'namespace' => 'Restaurant'], function () use ($router) {
-	post('restaurant/menuitem/save', 'ManageController@postMenuItem')->name('restaurant.menuitem.save');
-	post('restaurant/menuitem/schedule', 'ManageController@postMenuItemSchedule')->name('restaurant.menuitem.schedule');
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:manage_restaurants'], 'namespace' => 'Restaurant'], function () use ($router) {
+	post('restaurant/save', 'ManageController@postRestaurant')->name('restaurant.save');
 });
 
-$router->group(['middleware' => 'auth', 'namespace' => 'Client'], function () use ($router) {
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:manage_menu_items'], 'namespace' => 'Restaurant'], function () use ($router) {
+	post('restaurant/menuitem/save', 'ManageController@postMenuItem')->name('restaurant.menuitem.save');
+});
+
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:schedule_menu_items'], 'namespace' => 'Restaurant'], function () use ($router) {
+	post('restaurant/menuitem/schedule', 'ManageController@postMenuItemSchedule')->name('restaurant.menuitem.schedule');
+	post('restaurant/menuitem/save', 'ManageController@postMenuItem')->name('restaurant.menuitem.save');
+});
+
+$router->group(['middleware' => ['auth', 'access.routeNeedsPermission:basic_client_permissions'], 'namespace' => 'Client'], function () use ($router) {
 	get('client/profile/update', 'ProfileController@update')->name('client.profile.update');
 	post('client/profile/save', 'ProfileController@postSave')->name('client.profile.save');
 });
