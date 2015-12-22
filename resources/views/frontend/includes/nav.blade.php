@@ -119,7 +119,7 @@
 			        	<div class="col-md-6" style="display: inline-block;">
 			        	<b>Start Date</b><br />
 			            <p class="input-group">
-			              <input type="text" class="form-control" uib-datepicker-popup="@{{format}}" is-open="status.start_date.opened" ng-model="start_date_obj" datepicker-options="dateOptions" close-text="Close" />
+			              <input readonly="readonly" type="text" class="form-control" uib-datepicker-popup="@{{format}}" is-open="status.start_date.opened" ng-model="start_date_obj" datepicker-options="dateOptions" close-text="Close" />
 			              <span class="input-group-btn">
 			                <button type="button" class="btn btn-default" ng-click="open($event, 'start_date')"><i class="glyphicon glyphicon-calendar"></i></button>
 			              </span>
@@ -128,7 +128,7 @@
 			        	<div class="col-md-6" style="display: inline-block;">
 			        	<b>End Date (optional)</b><br />
 			            <p class="input-group">
-			              <input type="text" class="form-control" uib-datepicker-popup="@{{format}}" is-open="status.end_date.opened" ng-model="end_date_obj" datepicker-options="dateOptions" close-text="Close" />
+			              <input readonly="readonly" type="text" class="form-control" uib-datepicker-popup="@{{format}}" is-open="status.end_date.opened" ng-model="end_date_obj" datepicker-options="dateOptions" close-text="Close" />
 			              <span class="input-group-btn">
 			                <button type="button" class="btn btn-default" ng-click="open($event, 'end_date')"><i class="glyphicon glyphicon-calendar"></i></button>
 			              </span>
