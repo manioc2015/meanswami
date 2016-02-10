@@ -10,7 +10,7 @@
 | the IoC container for the system binding all of the various parts.
 |
 */
-define('APP_PATH', '/var/www/swami/');
+define('APP_PATH', '/home/grubhound/meanswami/');
 
 
 $app = new Illuminate\Foundation\Application(
